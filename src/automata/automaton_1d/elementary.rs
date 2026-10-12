@@ -68,7 +68,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
 
         let mut cell_rules: Vec<(bool, bool, bool)> = Vec::new();
         for i in 0..8 {
-            let set = (i & 0b001 > 0, i & 0b010 > 0, i & 0b100 > 0);
+            let set = (i & 0b100 > 0, i & 0b010 > 0, i & 0b001 > 0);
 
             if self.rule & 1 << i > 0 {
                 cell_rules.push(set);

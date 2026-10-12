@@ -17,7 +17,7 @@ fn window_conf() -> Conf {
 async fn main() {
     let cfg = ElementaryConfig::CenterPixel;
 
-    let mut el = Elementary::new(2000, cfg, 29);
+    let mut el = Elementary::new(2000, cfg, 150);
 
     loop {
         clear_background(BLACK);
