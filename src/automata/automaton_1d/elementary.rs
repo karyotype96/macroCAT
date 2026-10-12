@@ -1,4 +1,4 @@
-use crate::automata::automaton_1d::base::{Automaton1D, Automaton1DInfo};
+use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::timer::Timer};
 
 use macroquad::{color::WHITE, shapes::draw_rectangle, window::screen_width};
 use rand;
@@ -13,6 +13,7 @@ pub enum ElementaryConfig {
 pub struct Elementary {
     pub info: Automaton1DInfo<bool>,
     pub rule: u8,
+    pub timer: Timer,
 }
 
 impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
@@ -25,7 +26,8 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
         
         let mut s = Self {
             info,
-            rule
+            rule,
+            timer: Timer::new()
         };
 
         s.apply_config(config);
@@ -89,6 +91,12 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
             if cell_rules.contains(&neighbors) {
                 self.info.data[self.info.current_row][i] = true;
             }
+        }
+    }
+
+    fn control(&mut self) {
+        if self.timer.run_timer() {
+            self.pass_time();
         }
     }
 

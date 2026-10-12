@@ -1,6 +1,5 @@
 pub mod automata;
-
-use std::time::Instant;
+pub mod helpers;
 
 use macroquad::prelude::*;
 
@@ -18,8 +17,6 @@ fn window_conf() -> Conf {
 async fn main() {
     let cfg = ElementaryConfig::CenterPixel;
 
-    let mut is_held = false;
-    let mut start_time = Instant::now();
     let mut el = Elementary::new(2000, cfg, 29);
 
     loop {
@@ -29,20 +26,7 @@ async fn main() {
             break;
         }
 
-        if is_key_down(KeyCode::Space) {
-            if !is_held {
-                is_held = true;
-                start_time = Instant::now();
-            }
-
-            if start_time.elapsed().as_millis() >= 33 {
-                el.pass_time();
-                start_time = Instant::now();
-            }
-        }
-        if is_key_released(KeyCode::Space) {
-            is_held = false;
-        }
+        el.control();
 
         if is_key_pressed(KeyCode::R) {
             el.restart(cfg);
