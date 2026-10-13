@@ -40,6 +40,7 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Backspace) {
+            toaster.flush();
             rule = random();
             toaster.add_message(
                 format!("Rule selected: {}", rule).as_str(),
@@ -52,6 +53,7 @@ async fn main() {
             el = Extended::new(2000, cfg, rule);
         }
         if is_key_pressed(KeyCode::M) {
+            toaster.flush();
             toaster.add_message(
                 format!("Rule selected: {}", rule).as_str(),
                 None,

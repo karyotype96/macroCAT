@@ -147,6 +147,10 @@ impl Toaster {
         );
     }
 
+    pub fn flush(&mut self) {
+        self.toasts.clear();
+    }
+
     pub fn run(&mut self) {
         if self.toasts.len() > 0 {
             self.toasts[0].draw();
