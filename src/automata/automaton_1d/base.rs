@@ -55,6 +55,8 @@ pub trait Automaton1D<Data: Clone + Default + PartialEq + PartialOrd, Config, Ru
     fn restart(&mut self, config: Config);
     fn pass_time(&mut self);
 
+    fn move_window(&mut self, direction: i32);
+
     fn control(&mut self);
 
     fn draw(&self);

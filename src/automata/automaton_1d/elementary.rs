@@ -1,6 +1,6 @@
 use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
-use macroquad::{color::WHITE, input::KeyCode, shapes::draw_rectangle, window::screen_width};
+use macroquad::{color::WHITE, input::{KeyCode, is_key_down}, shapes::draw_rectangle, window::screen_width};
 use rand;
 
 #[derive(Copy, Clone)]
@@ -15,6 +15,7 @@ pub struct Elementary {
     pub rule: u8,
     pub timer: Timer,
     pub advance_delayer: Delayer,
+    pub move_delayer: Delayer,
 }
 
 impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
@@ -30,6 +31,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
             rule,
             timer: Timer::new(),
             advance_delayer: Delayer::new(None),
+            move_delayer: Delayer::new(None),
         };
 
         s.apply_config(config);
@@ -59,7 +61,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
 
     fn restart(&mut self, config: ElementaryConfig) {
         let width = self.info.data[0].len();
-        let seen_range = self.info.seen_range;
+        let seen_range = (width / 2 + 1 - 50, width / 2 + 1 + 50);
 
         self.info = Automaton1DInfo::new(width, seen_range);
         self.apply_config(config);
@@ -96,9 +98,38 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
         }
     }
 
+    fn move_window(&mut self, direction: i32) {
+        if direction < 0 {
+            if self.info.seen_range.0 > 0 {
+                self.info.seen_range.0 -= 1;
+                self.info.seen_range.1 -= 1;
+            }
+        }
+
+        if direction > 0 {
+            if self.info.seen_range.1 < self.info.data[0].len()-1 {
+                self.info.seen_range.0 += 1;
+                self.info.seen_range.1 += 1;
+            }
+        }
+    }
+
     fn control(&mut self) {
-        if self.advance_delayer.run_delayer(KeyCode::Space) && self.timer.run_timer(KeyCode::Space) {
+        if self.advance_delayer.run_delayer(&[KeyCode::Space]) && self.timer.run_timer(&[KeyCode::Space]) {
             self.pass_time();
+        }
+
+        let move_keys = [KeyCode::Left, KeyCode::Right, KeyCode::A, KeyCode::D];
+        if self.move_delayer.run_delayer(&move_keys) && self.timer.run_timer(&move_keys) {
+            let mut movement = 0;
+            if is_key_down(KeyCode::Left) || is_key_down(KeyCode::A) {
+                movement -= 1;
+            }
+            if is_key_down(KeyCode::Right) || is_key_down(KeyCode::D) {
+                movement += 1;
+            }
+
+            self.move_window(movement);
         }
     }
 

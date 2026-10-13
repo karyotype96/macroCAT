@@ -28,6 +28,13 @@ async fn main() {
         None, 
         None
     );
+    toaster.add_message(
+        "Press LEFT/A to move the view to the left and RIGHT/D to move it to the right.",
+        None,
+        None,
+        None,
+        None
+    );
     
     loop {
         clear_background(BLACK);

@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use macroquad::input::{KeyCode, is_key_down, is_key_released};
+use macroquad::input::{KeyCode, is_key_down};
 
 pub const TIMER_DURATION_MILLIS: u128 = 33;
 
@@ -17,21 +17,26 @@ impl Timer {
         }
     }
 
-    pub fn run_timer(&mut self, key: KeyCode) -> bool {
+    pub fn run_timer(&mut self, keys: &[KeyCode]) -> bool {
         let mut status = false;
-        if is_key_down(key) {
-            if !self.is_held {
-                self.is_held = true;
-                self.start_time = Instant::now();
-            }
 
-            if self.start_time.elapsed().as_millis() >= TIMER_DURATION_MILLIS {
-                status = true;
-                self.start_time = Instant::now();
+        let mut at_least_one = false;
+        for key in keys {
+            if is_key_down(*key) {
+                at_least_one = true;
+                if !self.is_held {
+                    self.is_held = true;
+                    self.start_time = Instant::now();
+                }
+
+                if self.start_time.elapsed().as_millis() >= TIMER_DURATION_MILLIS {
+                    status = true;
+                    self.start_time = Instant::now();
+                }
             }
         }
 
-        if is_key_released(key) {
+        if !at_least_one {
             self.is_held = false;
         }
 

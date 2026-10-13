@@ -24,21 +24,28 @@ impl Delayer {
         }
     }
 
-    pub fn run_delayer(&mut self, key: KeyCode) -> bool {
+    pub fn run_delayer(&mut self, keys: &[KeyCode]) -> bool {
         let mut status = false;
 
-        if is_key_down(key) {
-            if !self.is_held {
-                self.is_held = true;
-                self.start_time = Instant::now();
-                return true;
-            }
+        let mut at_least_one = false;
 
-            let elapsed = self.start_time.elapsed().as_millis();
-            if elapsed >= self.delay_time {
-                status = true;
+        for key in keys {
+            if is_key_down(*key) {
+                at_least_one = true;
+                if !self.is_held {
+                    self.is_held = true;
+                    self.start_time = Instant::now();
+                    return true;
+                }
+
+                let elapsed = self.start_time.elapsed().as_millis();
+                if elapsed >= self.delay_time {
+                    status = true;
+                }
             }
-        } else {
+        }
+
+        if !at_least_one {
             self.is_held = false;
         }
 
