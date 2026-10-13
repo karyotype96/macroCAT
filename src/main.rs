@@ -1,18 +1,23 @@
 pub mod automata;
 pub mod helpers;
 pub mod toaster;
+pub mod screens;
 
 use macroquad::prelude::*;
 use ::rand::random;
 
-use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, toaster::toaster::Toaster};
+use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, screens::button::Button, toaster::toaster::Toaster};
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "MacroCAT".to_owned(),
-        fullscreen: false,
+        fullscreen: true,
         ..Default::default()
     }
+}
+
+fn print_callback() {
+    println!("Hello!");
 }
 
 #[macroquad::main(window_conf)]
@@ -23,6 +28,8 @@ async fn main() {
 
     let mut el = Extended::new(2000, cfg, rule);
     let mut toaster = Toaster::new();
+    let mut button = Button::new("Click me!", (24.0, screen_height() - 72.0), None, None, None);
+    button.attach_callback(Some(print_callback));
 
     toaster.add_message(
         format!("Rule selected: {}", rule).as_str(),
@@ -66,6 +73,9 @@ async fn main() {
         el.control();
         el.draw();
         toaster.run();
+
+        button.control();
+        button.draw();
 
         next_frame().await
     }

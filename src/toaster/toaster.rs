@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, time::Instant};
 
-use macroquad::{color::{BLACK, Color, GREEN, RED, WHITE}, shapes::{draw_rectangle, draw_rectangle_lines}, text::{draw_text, measure_text}};
+use macroquad::{color::{BLACK, Color, GREEN, RED, WHITE}, shapes::{draw_rectangle, draw_rectangle_lines}, text::{TextParams, draw_text_ex, measure_text}};
 
 use crate::helpers::smoothing::EasingType;
 
@@ -111,14 +111,20 @@ impl ToastMessage {
             }
         );
 
-        draw_text(
+        draw_text_ex(
             self.message.as_str(),
             x_position + OFFSET,
             text_dimensions.height + OFFSET * 1.7,
-            FONT_SIZE as f32,
-            Color {
-                a: self.get_opacity(),
-                ..color
+            TextParams { 
+                font: None, 
+                font_size: FONT_SIZE,
+                font_scale: 1.0, 
+                font_scale_aspect: 1.0, 
+                rotation: 0.0, 
+                color: Color {
+                    a: self.get_opacity(),
+                    ..color
+                }
             }
         );
     }
@@ -131,7 +137,7 @@ pub struct Toaster {
 impl Toaster {
     pub fn new() -> Self {
         Self {
-            toasts: VecDeque::new()
+            toasts: VecDeque::new(),
         }
     }
 
