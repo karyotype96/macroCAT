@@ -1,6 +1,6 @@
-use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::timer::Timer};
+use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
-use macroquad::{color::WHITE, shapes::draw_rectangle, window::screen_width};
+use macroquad::{color::WHITE, input::KeyCode, shapes::draw_rectangle, window::screen_width};
 use rand;
 
 #[derive(Copy, Clone)]
@@ -14,6 +14,7 @@ pub struct Elementary {
     pub info: Automaton1DInfo<bool>,
     pub rule: u8,
     pub timer: Timer,
+    pub advance_delayer: Delayer,
 }
 
 impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
@@ -27,7 +28,8 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
         let mut s = Self {
             info,
             rule,
-            timer: Timer::new()
+            timer: Timer::new(),
+            advance_delayer: Delayer::new(None),
         };
 
         s.apply_config(config);
@@ -95,7 +97,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
     }
 
     fn control(&mut self) {
-        if self.timer.run_timer() {
+        if self.advance_delayer.run_delayer(KeyCode::Space) && self.timer.run_timer(KeyCode::Space) {
             self.pass_time();
         }
     }

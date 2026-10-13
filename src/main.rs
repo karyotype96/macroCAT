@@ -18,10 +18,16 @@ fn window_conf() -> Conf {
 async fn main() {
     let cfg = ElementaryConfig::CenterPixel;
 
-    let mut el = Elementary::new(2000, cfg, 99);
+    let mut el = Elementary::new(2000, cfg, 30);
     let mut toaster = Toaster::new();
 
-    toaster.add_message("Press SPACE to advance the automaton.", None, Some(2000), None, None);
+    toaster.add_message(
+        "Press SPACE to advance the automaton.", 
+        None, 
+        Some(2000), 
+        None, 
+        None
+    );
     
     loop {
         clear_background(BLACK);

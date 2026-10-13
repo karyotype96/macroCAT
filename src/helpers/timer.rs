@@ -17,9 +17,9 @@ impl Timer {
         }
     }
 
-    pub fn run_timer(&mut self) -> bool {
+    pub fn run_timer(&mut self, key: KeyCode) -> bool {
         let mut status = false;
-        if is_key_down(KeyCode::Space) {
+        if is_key_down(key) {
             if !self.is_held {
                 self.is_held = true;
                 self.start_time = Instant::now();
@@ -31,7 +31,7 @@ impl Timer {
             }
         }
 
-        if is_key_released(KeyCode::Space) {
+        if is_key_released(key) {
             self.is_held = false;
         }
 
