@@ -44,9 +44,6 @@ async fn main() {
         }
 
         el.control();
-        if is_key_pressed(KeyCode::R) {
-            el.restart(cfg);
-        }
         el.draw();
         toaster.run();
 

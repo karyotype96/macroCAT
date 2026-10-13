@@ -1,6 +1,6 @@
 use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
-use macroquad::{color::WHITE, input::{KeyCode, is_key_down}, shapes::draw_rectangle, window::screen_width};
+use macroquad::{color::WHITE, input::{KeyCode, is_key_down, is_key_pressed}, shapes::draw_rectangle, window::screen_width};
 use rand;
 
 #[derive(Copy, Clone)]
@@ -12,6 +12,7 @@ pub enum ElementaryConfig {
 
 pub struct Elementary {
     pub info: Automaton1DInfo<bool>,
+    pub config: ElementaryConfig,
     pub rule: u8,
     pub timer: Timer,
     pub advance_delayer: Delayer,
@@ -28,6 +29,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
         
         let mut s = Self {
             info,
+            config,
             rule,
             timer: Timer::new(),
             advance_delayer: Delayer::new(None),
@@ -59,12 +61,12 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
         }
     }
 
-    fn restart(&mut self, config: ElementaryConfig) {
+    fn restart(&mut self) {
         let width = self.info.data[0].len();
         let seen_range = (width / 2 + 1 - 50, width / 2 + 1 + 50);
 
         self.info = Automaton1DInfo::new(width, seen_range);
-        self.apply_config(config);
+        self.apply_config(self.config);
     }
 
     fn pass_time(&mut self) {
@@ -99,19 +101,7 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
     }
 
     fn move_window(&mut self, direction: i32) {
-        if direction < 0 {
-            if self.info.seen_range.0 > 0 {
-                self.info.seen_range.0 -= 1;
-                self.info.seen_range.1 -= 1;
-            }
-        }
-
-        if direction > 0 {
-            if self.info.seen_range.1 < self.info.data[0].len()-1 {
-                self.info.seen_range.0 += 1;
-                self.info.seen_range.1 += 1;
-            }
-        }
+        self.info.move_window(direction);
     }
 
     fn control(&mut self) {
@@ -130,6 +120,10 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
             }
 
             self.move_window(movement);
+        }
+
+        if is_key_pressed(KeyCode::R) {
+            self.restart();
         }
     }
 

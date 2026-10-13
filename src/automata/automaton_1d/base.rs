@@ -31,6 +31,22 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton1DInfo<Data
         self.data.len()
     }
 
+    pub fn move_window(&mut self, direction: i32) {
+        if direction < 0 {
+            if self.seen_range.0 > 0 {
+                self.seen_range.0 -= 1;
+                self.seen_range.1 -= 1;
+            }
+        }
+
+        if direction > 0 {
+            if self.seen_range.1 < self.data[0].len()-1 {
+                self.seen_range.0 += 1;
+                self.seen_range.1 += 1;
+            }
+        }
+    }
+
     pub fn increment_time(&mut self) {
         if self.current_row < self.get_height()-1 {
             self.current_row += 1;
@@ -52,7 +68,7 @@ pub trait Automaton1D<Data: Clone + Default + PartialEq + PartialOrd, Config, Ru
     fn new(width: usize, config: Config, rule: Rule) -> Self;
     fn apply_config(&mut self, config: Config);
 
-    fn restart(&mut self, config: Config);
+    fn restart(&mut self);
     fn pass_time(&mut self);
 
     fn move_window(&mut self, direction: i32);
