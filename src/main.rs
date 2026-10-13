@@ -1,9 +1,10 @@
 pub mod automata;
 pub mod helpers;
+pub mod toaster;
 
 use macroquad::prelude::*;
 
-use crate::automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}};
+use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, toaster::toaster::{Toaster}};
 
 fn window_conf() -> Conf {
     Conf {
@@ -17,8 +18,11 @@ fn window_conf() -> Conf {
 async fn main() {
     let cfg = ElementaryConfig::CenterPixel;
 
-    let mut el = Elementary::new(2000, cfg, 150);
+    let mut el = Elementary::new(2000, cfg, 99);
+    let mut toaster = Toaster::new();
 
+    toaster.add_message("Press SPACE to advance the automaton.", None, Some(2000), None, None);
+    
     loop {
         clear_background(BLACK);
 
@@ -27,12 +31,11 @@ async fn main() {
         }
 
         el.control();
-
         if is_key_pressed(KeyCode::R) {
             el.restart(cfg);
         }
-
         el.draw();
+        toaster.run();
 
         next_frame().await
     }

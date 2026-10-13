@@ -1,6 +1,5 @@
 use macroquad::window::{screen_height, screen_width};
 
-#[derive(Default)]
 pub struct Automaton1DInfo<Data: PartialEq + PartialOrd> {
     pub current_row: usize,         
     pub data: Vec<Vec<Data>>,
@@ -20,7 +19,7 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton1DInfo<Data
         Self {
             current_row: 0,
             data,
-            seen_range
+            seen_range,
         }
     }
 
