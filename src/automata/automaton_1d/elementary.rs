@@ -44,6 +44,8 @@ impl Automaton1D<bool, ElementaryConfig, u8> for Elementary {
     fn apply_config(&mut self, config: ElementaryConfig) {
         let center_index = self.info.data[0].len() / 2 + 1;
 
+        self.config = config;
+
         match config {
             ElementaryConfig::CenterPixel => {
                 self.info.data[0][center_index] = true;

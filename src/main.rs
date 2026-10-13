@@ -3,36 +3,32 @@ pub mod helpers;
 pub mod toaster;
 
 use macroquad::prelude::*;
+use ::rand::random;
 
-use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, toaster::toaster::{Toaster}};
+use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, toaster::toaster::Toaster};
 
 fn window_conf() -> Conf {
     Conf {
         window_title: "MacroCAT".to_owned(),
-        fullscreen: true,
+        fullscreen: false,
         ..Default::default()
     }
 }
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let cfg = ElementaryConfig::CenterPixel;
+    let cfg = ExtendedConfig::CenterPixel;
 
-    let mut el = Elementary::new(2000, cfg, 30);
+    let mut rule: u32 = random();
+
+    let mut el = Extended::new(2000, cfg, rule);
     let mut toaster = Toaster::new();
 
     toaster.add_message(
-        "Press SPACE to advance the automaton.", 
-        None, 
-        Some(2000), 
-        None, 
-        None
-    );
-    toaster.add_message(
-        "Press LEFT/A to move the view to the left and RIGHT/D to move it to the right.",
+        format!("Rule selected: {}", rule).as_str(),
         None,
         None,
-        None,
+        Some(10000),
         None
     );
     
@@ -41,6 +37,28 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Escape) {
             break;
+        }
+
+        if is_key_pressed(KeyCode::Backspace) {
+            rule = random();
+            toaster.add_message(
+                format!("Rule selected: {}", rule).as_str(),
+                None,
+                None,
+                Some(10000),
+                None
+            );
+
+            el = Extended::new(2000, cfg, rule);
+        }
+        if is_key_pressed(KeyCode::M) {
+            toaster.add_message(
+                format!("Rule selected: {}", rule).as_str(),
+                None,
+                None,
+                Some(10000),
+                None
+            );
         }
 
         el.control();

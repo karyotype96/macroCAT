@@ -1,0 +1,151 @@
+use macroquad::{color::WHITE, input::{KeyCode, is_key_down, is_key_pressed}, shapes::draw_rectangle, window::screen_width};
+
+use crate::{automata::automaton_1d::base::{Automaton1D, Automaton1DInfo}, helpers::{delayer::Delayer, timer::Timer}};
+
+#[derive(Copy, Clone)]
+pub enum ExtendedConfig {
+    CenterPixel,
+    AllRandom,
+    RandomCenter(usize)
+}
+
+pub struct Extended {
+    pub info: Automaton1DInfo<bool>,
+    pub config: ExtendedConfig,
+    pub rule: u32,
+    pub timer: Timer,
+    pub advance_delayer: Delayer,
+    pub move_delayer: Delayer
+}
+
+impl Automaton1D<bool, ExtendedConfig, u32> for Extended {
+    fn new(width: usize, config: ExtendedConfig, rule: u32) -> Self {
+        if width < 100 {
+            panic!("Automaton should not have a width less than 100");
+        }
+
+        let info: Automaton1DInfo<bool> = Automaton1DInfo::new(width, (width / 2 + 1 - 50, width / 2 + 1 + 50));
+
+        let mut s = Self {
+            info,
+            config,
+            rule,
+            timer: Timer::new(),
+            advance_delayer: Delayer::new(None),
+            move_delayer: Delayer::new(None),
+        };
+
+        s.apply_config(config);
+
+        s
+    }
+
+    fn apply_config(&mut self, config: ExtendedConfig) {
+        let center_index = self.info.data[0].len() / 2 + 1;
+
+        self.config = config;
+
+        match config {
+            ExtendedConfig::CenterPixel => {
+                self.info.data[0][center_index] = true;
+            }
+            ExtendedConfig::AllRandom => {
+                for i in 0..self.info.data[0].len() {
+                    self.info.data[0][i] = rand::random_bool(0.5);
+                }
+            }
+            ExtendedConfig::RandomCenter(size) => {
+                for i in center_index-size..center_index+size {
+                    self.info.data[0][i] = rand::random_bool(0.5);
+                }
+            }
+        }
+    }
+
+    fn restart(&mut self) {
+        let width = self.info.data[0].len();
+        let seen_range = (width / 2 + 1 - 50, width / 2 + 1 + 50);
+
+        self.info = Automaton1DInfo::new(width, seen_range);
+        self.apply_config(self.config);
+    }
+
+    fn pass_time(&mut self) {
+        self.info.increment_time();
+
+        let mut cell_rules: Vec<(bool, bool, bool, bool, bool)> = Vec::new();
+        for i in 0..32 {
+            let set = (i & 0b10000 > 0, i & 0b01000 > 0, i & 0b00100 > 0, i & 0b00010 > 0, i & 0b00001 > 0);
+
+            if self.rule & 1 << i > 0 {
+                cell_rules.push(set);
+            }
+        }
+
+        let previous_row = self.info.get_previous_row();
+        for i in 0..self.info.get_width() {
+            self.info.data[self.info.current_row][i] = false;
+
+            let mut neighbors = (false, false, false, false, false);
+            if i > 1 {
+                neighbors.0 = previous_row[i-2];
+            }
+            if i > 0 {
+                neighbors.1 = previous_row[i-1];
+            }
+            neighbors.2 = previous_row[i];
+            if i < previous_row.len()-1 {
+                neighbors.3 = previous_row[i+1];
+            }
+            if i < previous_row.len()-2 {
+                neighbors.4 = previous_row[i+2];
+            }
+
+            if cell_rules.contains(&neighbors) {
+                self.info.data[self.info.current_row][i] = true;
+            }
+        }
+    }
+
+    fn move_window(&mut self, direction: i32) {
+        self.info.move_window(direction);
+    }
+
+    fn control(&mut self) {
+        if self.advance_delayer.run_delayer(&[KeyCode::Space]) && self.timer.run_timer(&[KeyCode::Space]) {
+            self.pass_time();
+        }
+
+        let move_keys = [KeyCode::Left, KeyCode::Right, KeyCode::A, KeyCode::D];
+        if self.move_delayer.run_delayer(&move_keys) && self.timer.run_timer(&move_keys) {
+            let mut movement = 0;
+            if is_key_down(KeyCode::Left) || is_key_down(KeyCode::A) {
+                movement -= 1;
+            }
+            if is_key_down(KeyCode::Right) || is_key_down(KeyCode::D) {
+                movement += 1;
+            }
+
+            self.move_window(movement);
+        }
+
+        if is_key_pressed(KeyCode::R) {
+            self.restart();
+        }
+    }
+
+    fn draw(&self) {
+        let cell_width = screen_width() / (self.info.seen_range.1 - self.info.seen_range.0) as f32;
+
+        for y in 0..self.info.get_height() {
+            for x in self.info.seen_range.0..self.info.seen_range.1 {
+                let x_position = ((x - self.info.seen_range.0) as f32) * cell_width;
+                let y_position = (y as f32) * cell_width;
+
+                if self.info.data[y][x] {
+                    draw_rectangle(x_position, y_position, cell_width, cell_width, WHITE);
+                }
+            }
+        }
+    }
+}
