@@ -1,8 +1,4 @@
-use std::thread::current;
-
 use macroquad::{color::{BLACK, Color, WHITE}, input::{MouseButton, is_mouse_button_pressed, mouse_position}, shapes::{draw_rectangle, draw_rectangle_lines}, text::{TextParams, draw_text_ex, measure_text}};
-
-use crate::{MenuScreen, screens::screen::Screen};
 
 const DEFAULT_FONT_SIZE: u16 = 24;
 const DEFAULT_COLOR: Color = WHITE;
@@ -16,11 +12,10 @@ pub struct Button {
     dimensions: (f32, f32),
     color: Color,
     font_size: u16,
-    callback: fn(&mut MenuScreen),
 }
 
 impl Button {
-    pub fn new(label: &str, position: (f32, f32), font_size: Option<u16>, color: Option<Color>, callback: fn(&mut MenuScreen )) -> Self {
+    pub fn new(label: &str, position: (f32, f32), font_size: Option<u16>, color: Option<Color>) -> Self {
         let fsize = match font_size {
             Some(s) => s,
             None => DEFAULT_FONT_SIZE
@@ -46,7 +41,6 @@ impl Button {
             dimensions: (width, height),
             color: bcolor,
             font_size: fsize,
-            callback,
         }
     }
 
@@ -54,12 +48,10 @@ impl Button {
         self.dimensions
     }
 
-    pub fn control(&self, current_screen: &mut MenuScreen) {
+    pub fn control(&self) -> bool {
         let mouse_over_button = self.mouse_over_button();
         
-        if is_mouse_button_pressed(MouseButton::Left) && mouse_over_button {
-            (self.callback)(current_screen);
-        }
+        is_mouse_button_pressed(MouseButton::Left) && mouse_over_button
     }
 
     pub fn draw(&self) {

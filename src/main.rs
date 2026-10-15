@@ -3,12 +3,10 @@ pub mod helpers;
 pub mod toaster;
 pub mod screens;
 
-use std::thread::current;
-
 use macroquad::prelude::*;
 use ::rand::random;
 
-use crate::{automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, screens::{screen::Screen, automaton_type_screen::AutomatonTypeScreen, button::Button}, toaster::toaster::Toaster};
+use crate::{automata::automaton_1d::{base::{Automaton1D, Automaton1DInfo}, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, button::Button, elementary_settings::ElementarySettingsScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -21,8 +19,8 @@ pub enum MenuScreen {
     ElementaryAutomatonOptions,
     ExtendedAutomatonOptions,
     
-    ElementaryAutomatonShow,
-    ExtendedAutomatonShow,
+    ElementaryAutomatonShow(ElementaryConfig, u8),
+    ExtendedAutomatonShow(ExtendedConfig, u32),
 }
 
 fn window_conf() -> Conf {
@@ -45,7 +43,15 @@ async fn main() {
     let mut el = Extended::new(2000, cfg, rule);
     let mut toaster = Toaster::new();
 
-    let automaton_type_screen = AutomatonTypeScreen {};
+    let mut automaton_type_screen = AutomatonTypeScreen {};
+    let mut automaton_1d_screen = Automaton1DScreen {};
+
+    let mut elementary_settings_screen = ElementarySettingsScreen {
+        checkboxes: Vec::new(),
+        cfg: ElementaryConfig::CenterPixel,
+        rule: 0
+    };
+    elementary_settings_screen.init();
 
     toaster.add_message(
         format!("Rule selected: {}", rule).as_str(),
@@ -69,26 +75,28 @@ async fn main() {
             }
 
             MenuScreen::SelectAutomaton1D => {
-
+                automaton_1d_screen.control(&mut current_scene);
+                automaton_1d_screen.draw();
             }
             MenuScreen::SelectAutomaton2D => {
-
+                
             }
             MenuScreen::SelectAutomaton3D => {
 
             }
 
             MenuScreen::ElementaryAutomatonOptions => {
-
+                elementary_settings_screen.control(&mut current_scene);
+                elementary_settings_screen.draw();
             }
             MenuScreen::ExtendedAutomatonOptions => {
 
             }
 
-            MenuScreen::ElementaryAutomatonShow => {
+            MenuScreen::ElementaryAutomatonShow(cfg, rule) => {
 
             }
-            MenuScreen::ExtendedAutomatonShow => {
+            MenuScreen::ExtendedAutomatonShow(cfg, rule) => {
 
             }
         }

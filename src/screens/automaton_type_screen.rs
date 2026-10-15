@@ -1,21 +1,18 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::{Button}, screen::Screen}};
-
-pub fn set_to_automata_1d(current_screen: &mut MenuScreen) {
-    *current_screen = MenuScreen::SelectAutomaton1D;
-}
+use crate::{MenuScreen, screens::{button::Button, screen::Screen}};
 
 pub struct AutomatonTypeScreen;
 
 impl Screen for AutomatonTypeScreen {
+    fn init(&mut self) {}
+
     fn get_buttons(&self) -> Vec<Button> {
         let button1 = Button::new(
             "1D Automata",
             (screen_width() / 2.0, screen_height() / 3.0),
             None,
             None,
-            |s: &mut MenuScreen| { *s = MenuScreen::SelectAutomaton1D }
         );
 
         let button2 = Button::new(
@@ -23,7 +20,6 @@ impl Screen for AutomatonTypeScreen {
             (screen_width() / 2.0, screen_height() / 3.0 + button1.get_dimensions().1 + 20.0),
             None,
             None,
-            |s: &mut MenuScreen| { *s = MenuScreen::SelectAutomaton2D }
         );
 
         let button3 = Button::new(
@@ -31,16 +27,22 @@ impl Screen for AutomatonTypeScreen {
             (screen_width() / 2.0, screen_height() / 3.0 + button1.get_dimensions().1 + button2.get_dimensions().1 + 40.0),
             None,
             None,
-            |s: &mut MenuScreen| { *s = MenuScreen::SelectAutomaton3D }
         );
 
         vec![button1, button2, button3]
     }
 
-    fn control(&self, current_screen: &mut MenuScreen) {
+    fn control(&mut self, current_screen: &mut MenuScreen) {
         let buttons = self.get_buttons();
-        for i in 0..buttons.len() {
-            buttons[i].control(current_screen);
+        
+        if buttons[0].control() {
+            *current_screen = MenuScreen::SelectAutomaton1D;
+        }
+        if buttons[1].control() {
+            *current_screen = MenuScreen::SelectAutomaton2D;
+        }
+        if buttons[2].control() {
+            *current_screen = MenuScreen::SelectAutomaton3D;
         }
     }
 
