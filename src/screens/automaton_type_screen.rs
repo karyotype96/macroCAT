@@ -1,11 +1,11 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::Button, screen::Screen}};
+use crate::{MenuScreen, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct AutomatonTypeScreen;
 
 impl Screen for AutomatonTypeScreen {
-    fn init(&mut self) {}
+    fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<Button> {
         let button1 = Button::new(
@@ -32,16 +32,31 @@ impl Screen for AutomatonTypeScreen {
         vec![button1, button2, button3]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen) {
+    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
         let buttons = self.get_buttons();
         
         if buttons[0].control() {
+            toaster.flush();
+            toaster.add_message(
+                "Select a 1-dimensional automaton.", 
+                None, None, None, None
+            );
             *current_screen = MenuScreen::SelectAutomaton1D;
         }
         if buttons[1].control() {
+            toaster.flush();
+            toaster.add_message(
+                "Select a 2-dimensional automaton.", 
+                None, None, None, None
+            );
             *current_screen = MenuScreen::SelectAutomaton2D;
         }
         if buttons[2].control() {
+            toaster.flush();
+            toaster.add_message(
+                "Select a 3-dimensional automaton.", 
+                None, None, None, None
+            );
             *current_screen = MenuScreen::SelectAutomaton3D;
         }
     }

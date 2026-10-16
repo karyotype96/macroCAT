@@ -4,9 +4,8 @@ pub mod toaster;
 pub mod screens;
 
 use macroquad::prelude::*;
-use ::rand::random;
 
-use crate::{automata::automaton_1d::{base::{Automaton1D, Automaton1DInfo}, elementary::{Elementary, ElementaryConfig}, extended::{Extended, ExtendedConfig}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, button::Button, elementary_settings::ElementarySettingsScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_1d::{elementary::{ElementaryConfig}, extended::{ExtendedConfig}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -34,13 +33,8 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let cfg = ExtendedConfig::CenterPixel;
-
     let mut current_scene = MenuScreen::SelectAutomatonType;
 
-    let mut rule: u32 = random();
-
-    let mut el = Extended::new(2000, cfg, rule);
     let mut toaster = Toaster::new();
 
     let mut automaton_type_screen = AutomatonTypeScreen {};
@@ -53,13 +47,7 @@ async fn main() {
     };
     elementary_settings_screen.init();
 
-    toaster.add_message(
-        format!("Rule selected: {}", rule).as_str(),
-        None,
-        None,
-        Some(10000),
-        None
-    );
+    let mut elementary_show_screen = ElementaryShowScreen::new();
     
     loop {
         clear_background(BLACK);
@@ -68,14 +56,15 @@ async fn main() {
             break;
         }
 
+        toaster.run();
         match current_scene {
             MenuScreen::SelectAutomatonType => {
-                automaton_type_screen.control(&mut current_scene);
+                automaton_type_screen.control(&mut current_scene, &mut toaster);
                 automaton_type_screen.draw();
             }
 
             MenuScreen::SelectAutomaton1D => {
-                automaton_1d_screen.control(&mut current_scene);
+                automaton_1d_screen.control(&mut current_scene, &mut toaster);
                 automaton_1d_screen.draw();
             }
             MenuScreen::SelectAutomaton2D => {
@@ -86,7 +75,7 @@ async fn main() {
             }
 
             MenuScreen::ElementaryAutomatonOptions => {
-                elementary_settings_screen.control(&mut current_scene);
+                elementary_settings_screen.control(&mut current_scene, &mut toaster);
                 elementary_settings_screen.draw();
             }
             MenuScreen::ExtendedAutomatonOptions => {
@@ -94,7 +83,9 @@ async fn main() {
             }
 
             MenuScreen::ElementaryAutomatonShow(cfg, rule) => {
-
+                elementary_show_screen.set_info(cfg, rule);
+                elementary_show_screen.control(&mut current_scene, &mut toaster);
+                elementary_show_screen.draw();
             }
             MenuScreen::ExtendedAutomatonShow(cfg, rule) => {
 

@@ -1,6 +1,6 @@
 use macroquad::{color::{BLUE, WHITE}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, automata::automaton_1d::elementary::ElementaryConfig, screens::{button::Button, checkbox::Checkbox, screen::Screen}};
+use crate::{MenuScreen, automata::automaton_1d::elementary::ElementaryConfig, screens::{button::Button, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct ElementarySettingsScreen {
     pub checkboxes: Vec<Checkbox>,
@@ -26,7 +26,7 @@ impl Screen for ElementarySettingsScreen {
         let button_label = match self.cfg {
             ElementaryConfig::CenterPixel => String::from("Center Pixel"),
             ElementaryConfig::AllRandom => String::from("All Random"),
-            ElementaryConfig::RandomCenter(n) => format!("Random Center {n}x{n}")
+            ElementaryConfig::RandomCenter(n) => format!("Random Center {}", n*2-1)
         };
 
         let button1 = Button::new(
@@ -47,18 +47,23 @@ impl Screen for ElementarySettingsScreen {
     }
 
 
-    fn control(&mut self, current_screen: &mut MenuScreen) {
+    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
         let buttons = self.get_buttons();
 
         if buttons[0].control() {
             self.cfg = match self.cfg {
                 ElementaryConfig::CenterPixel => ElementaryConfig::AllRandom,
-                ElementaryConfig::AllRandom => ElementaryConfig::RandomCenter(5),
+                ElementaryConfig::AllRandom => ElementaryConfig::RandomCenter(3),
                 ElementaryConfig::RandomCenter(_) => ElementaryConfig::CenterPixel
             };
         }
 
         if buttons[1].control() {
+            toaster.flush();
+            toaster.add_message(
+                format!("Rule: {}", self.rule).as_str(), 
+                None, None, None, None
+            );
             *current_screen = MenuScreen::ElementaryAutomatonShow(self.cfg, self.rule);
         }
 

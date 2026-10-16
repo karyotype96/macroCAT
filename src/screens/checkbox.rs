@@ -38,7 +38,6 @@ impl Checkbox {
 
         if is_mouse_button_pressed(MouseButton::Left) && mouse_over_box {
             self.is_checked = !self.is_checked;
-            println!("is checked: {}", self.is_checked);
             return true;
         }
 

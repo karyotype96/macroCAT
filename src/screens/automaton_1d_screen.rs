@@ -1,11 +1,11 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::Button, screen::Screen}};
+use crate::{MenuScreen, screens::{button::Button, screen::Screen}, toaster::toaster::{Toaster}};
 
 pub struct Automaton1DScreen;
 
 impl Screen for Automaton1DScreen {
-    fn init(&mut self) {}
+    fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<Button> {
         let button_top = screen_height() / 6.0;
@@ -27,13 +27,33 @@ impl Screen for Automaton1DScreen {
         vec![button1, button2]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen) {
+    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
         let buttons = self.get_buttons();
         
         if buttons[0].control() {
+            toaster.flush();
+            toaster.add_message(
+                "Hit the checkboxes to change the bits of the automaton rule.", 
+                None, None, None, None
+            );
+            toaster.add_message(
+                "Press the button in the middle of the screen to change the starting cell config.", 
+                None, None, None, None
+            );
+
             *current_screen = MenuScreen::ElementaryAutomatonOptions;
         }
         if buttons[1].control() {
+            toaster.flush();
+            toaster.add_message(
+                "Hit the checkboxes to change the bits of the automaton rule.", 
+                None, None, None, None
+            );
+            toaster.add_message(
+                "Press the button in the middle of the screen to change the starting cell config.", 
+                None, None, None, None
+            );
+            
             *current_screen = MenuScreen::ExtendedAutomatonOptions;
         }
     }
