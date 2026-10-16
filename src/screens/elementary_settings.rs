@@ -1,4 +1,5 @@
-use macroquad::{color::{BLUE, WHITE}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
+use macroquad::{color::{BLUE, WHITE}, input::{KeyCode, is_key_pressed}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
+use rand::random;
 
 use crate::{MenuScreen, automata::automaton_1d::elementary::ElementaryConfig, screens::{button::Button, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
 
@@ -29,25 +30,37 @@ impl Screen for ElementarySettingsScreen {
             ElementaryConfig::RandomCenter(n) => format!("Random Center {}", n*2-1)
         };
 
-        let button1 = Button::new(
+        let config_button = Button::new(
             button_label.as_str(),
-            (screen_width() / 2.0, screen_height() / 2.0),
+            (screen_width() / 2.0, screen_height() * 3.0 / 4.0),
             None,
             None
         );
 
-        let button2 = Button::new(
+        let start_button = Button::new(
             "START!",
             (screen_width() / 2.0, screen_height() * 7.0 / 8.0),
             None,
             Some(BLUE),
         );
 
-        vec![button1, button2]
+        let random_rule_button = Button::new(
+            "Select random rule",
+            (screen_width() / 2.0, screen_height() / 2.0),
+            None,
+            None
+        );
+
+        vec![config_button, start_button, random_rule_button]
     }
 
 
     fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
+        if is_key_pressed(KeyCode::Q) {
+            toaster.flush();
+            *current_screen = MenuScreen::SelectAutomaton1D;
+        }
+        
         let buttons = self.get_buttons();
 
         if buttons[0].control() {
@@ -64,7 +77,19 @@ impl Screen for ElementarySettingsScreen {
                 format!("Rule: {}", self.rule).as_str(), 
                 None, None, None, None
             );
+            toaster.add_message(
+                "Press SPACE to advance time, and LEFT/RIGHT or A/D to move the view.", 
+                None, None, None, None
+            );
+            toaster.add_message(
+                "Press R to reset the automaton, and Q to go back to settings.", 
+                None, None, None, None
+            );
             *current_screen = MenuScreen::ElementaryAutomatonShow(self.cfg, self.rule);
+        }
+
+        if buttons[2].control() {
+            self.random_rule();
         }
 
         for i in 0..self.checkboxes.len() {
@@ -111,6 +136,21 @@ impl ElementarySettingsScreen {
             self.rule |= 1 << bit;
         } else {
             self.rule &= !(1 << bit);
+        }
+    }
+
+    fn random_rule(&mut self) {
+        let rule: u8 = random();
+
+        self.rule = rule;
+        for i in 0..self.checkboxes.len() {
+            let bit_index = 7-i;
+
+            if self.rule & (1 << bit_index) > 0 {
+                self.checkboxes[i].set(true);
+            } else {
+                self.checkboxes[i].set(false);
+            }
         }
     }
 }

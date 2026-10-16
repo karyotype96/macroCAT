@@ -17,6 +17,10 @@ impl Checkbox {
         }
     }
 
+    pub fn set(&mut self, state: bool) {
+        self.is_checked = state;
+    } 
+
     pub fn checked(&self) -> bool {
         self.is_checked
     }

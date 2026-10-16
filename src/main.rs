@@ -56,7 +56,6 @@ async fn main() {
             break;
         }
 
-        toaster.run();
         match current_scene {
             MenuScreen::SelectAutomatonType => {
                 automaton_type_screen.control(&mut current_scene, &mut toaster);
@@ -91,6 +90,8 @@ async fn main() {
 
             }
         }
+
+        toaster.run();
 
         /*
         if is_key_pressed(KeyCode::Backspace) {

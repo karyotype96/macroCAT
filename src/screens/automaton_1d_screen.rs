@@ -37,7 +37,7 @@ impl Screen for Automaton1DScreen {
                 None, None, None, None
             );
             toaster.add_message(
-                "Press the button in the middle of the screen to change the starting cell config.", 
+                "Press the button just above the \"START!\" button to change the starting cell config.", 
                 None, None, None, None
             );
 
