@@ -52,6 +52,10 @@ impl Checkbox {
         CHECKBOX_SIZE
     }
 
+    pub fn position(&self) -> (f32, f32) {
+        self.position
+    }
+
     pub fn draw(&self) {
         draw_rectangle(
             self.position.0 - (CHECKBOX_SIZE / 2.0), 
@@ -69,7 +73,6 @@ impl Checkbox {
         );
 
         if self.is_checked {
-            println!("is checked");
             draw_rectangle(
                 self.position.0 - (CHECKBOX_SIZE / 2.0) + 5.0,
                 self.position.1 - (CHECKBOX_SIZE / 2.0) + 5.0,

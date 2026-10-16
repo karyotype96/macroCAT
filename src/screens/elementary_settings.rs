@@ -1,4 +1,4 @@
-use macroquad::{color::{BLUE, WHITE}, input::{KeyCode, is_key_pressed}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
+use macroquad::{color::{BLACK, BLUE, GREEN, WHITE}, input::{KeyCode, is_key_pressed}, shapes::{draw_rectangle, draw_rectangle_lines}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 use rand::random;
 
 use crate::{MenuScreen, automata::automaton_1d::elementary::ElementaryConfig, screens::{button::Button, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
@@ -123,7 +123,7 @@ impl Screen for ElementarySettingsScreen {
         }
 
         for i in 0..self.checkboxes.len() {
-            self.checkboxes[i].draw();
+            self.draw_rule(&self.checkboxes[i], i as u8);
         }
     }
 }
@@ -150,6 +150,88 @@ impl ElementarySettingsScreen {
                 self.checkboxes[i].set(true);
             } else {
                 self.checkboxes[i].set(false);
+            }
+        }
+    }
+
+    // draw a small window concisely explaining the rule
+    // based on each checkbox
+    fn draw_rule(&self, checkbox: &Checkbox, index: u8) {
+        let bit = 7 - index;
+
+        let space_offset: f32 = 10.0;
+        let width: f32 = Checkbox::size() * 3.0 + (space_offset * 2.0);
+        let height: f32 = Checkbox::size() * 3.0;
+
+        let position = checkbox.position();
+
+        let top_left = (
+            position.0 - (width / 2.0),
+            position.1 - height - Checkbox::size() / 2.0
+        );
+
+        checkbox.draw();
+
+        if checkbox.mouse_over_box() {
+            draw_rectangle(
+                top_left.0,
+                top_left.1,
+                width, 
+                height,
+                BLACK
+            );
+            draw_rectangle_lines(
+                top_left.0, 
+                top_left.1, 
+                width, 
+                height,
+                2.0,
+                WHITE
+            );
+
+            for i in (0..3).rev() {
+                let box_pos = (
+                    top_left.0 + space_offset + Checkbox::size() / 2.0 + (2 - i) as f32 * Checkbox::size(),
+                    top_left.1 + (Checkbox::size())
+                );
+
+                if bit & (1 << i) > 0 {
+                    draw_rectangle(
+                        box_pos.0 - Checkbox::size() / 2.0,
+                        box_pos.1 - Checkbox::size() / 2.0,
+                        Checkbox::size(), 
+                        Checkbox::size(), 
+                        GREEN
+                    );
+                }
+
+                draw_rectangle_lines(
+                    box_pos.0 - Checkbox::size() / 2.0,
+                    box_pos.1 - Checkbox::size() / 2.0,
+                    Checkbox::size(), 
+                    Checkbox::size(), 
+                    2.0, 
+                    WHITE
+                );
+            }
+
+            if checkbox.checked() {
+                draw_rectangle(
+                    checkbox.position().0 - Checkbox::size() / 2.0, 
+                    top_left.1 + Checkbox::size() * 1.5, 
+                    Checkbox::size(), 
+                    Checkbox::size(), 
+                    WHITE
+                );
+            } else {
+                draw_rectangle_lines(
+                    checkbox.position().0 - Checkbox::size() / 2.0, 
+                    top_left.1 + Checkbox::size() * 1.5, 
+                    Checkbox::size(), 
+                    Checkbox::size(), 
+                    2.0, 
+                    WHITE
+                );
             }
         }
     }
