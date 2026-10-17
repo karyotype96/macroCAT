@@ -5,7 +5,7 @@ pub mod screens;
 
 use macroquad::prelude::*;
 
-use crate::{automata::automaton_1d::{elementary::{ElementaryConfig}, extended::{ExtendedConfig}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -47,7 +47,15 @@ async fn main() {
     };
     elementary_settings_screen.init();
 
+    let mut extended_settings_screen = ExtendedSettingsScreen {
+        checkboxes: Vec::new(),
+        cfg: ExtendedConfig::CenterPixel,
+        rule: 0
+    };
+    extended_settings_screen.init();
+
     let mut elementary_show_screen = ElementaryShowScreen::new();
+    let mut extended_show_screen = ExtendedShowScreen::new();
     
     loop {
         clear_background(BLACK);
@@ -78,7 +86,8 @@ async fn main() {
                 elementary_settings_screen.draw();
             }
             MenuScreen::ExtendedAutomatonOptions => {
-
+                extended_settings_screen.control(&mut current_scene, &mut toaster);
+                extended_settings_screen.draw();
             }
 
             MenuScreen::ElementaryAutomatonShow(cfg, rule) => {
@@ -87,7 +96,9 @@ async fn main() {
                 elementary_show_screen.draw();
             }
             MenuScreen::ExtendedAutomatonShow(cfg, rule) => {
-
+                extended_show_screen.set_info(cfg, rule);
+                extended_show_screen.control(&mut current_scene, &mut toaster);
+                extended_show_screen.draw();
             }
         }
 

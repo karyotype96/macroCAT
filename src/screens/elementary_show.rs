@@ -1,6 +1,6 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 
-use crate::{MenuScreen, automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, screens::{button::Button, screen::Screen}};
+use crate::{MenuScreen, automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct ElementaryShowScreen {
     pub is_init: bool,
@@ -14,7 +14,7 @@ impl Screen for ElementaryShowScreen {
         vec![]
     }
 
-    fn control(&mut self, current_screen: &mut crate::MenuScreen, _toaster: &mut crate::toaster::toaster::Toaster) {
+    fn control(&mut self, current_screen: &mut MenuScreen, _toaster: &mut Toaster) {
         self.el.control();
 
         if is_key_pressed(KeyCode::Q) {
