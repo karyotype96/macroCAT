@@ -5,7 +5,7 @@ pub mod screens;
 
 use macroquad::prelude::*;
 
-use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -72,6 +72,8 @@ async fn main() {
     };
     lifelike_settings_screen.init();
 
+    let mut lifelike_show_screen = LifelikeShowScreen::new();
+
     loop {
         clear_background(BLACK);
 
@@ -123,7 +125,9 @@ async fn main() {
             }
 
             MenuScreen::LifelikeAutomatonShow(cfg, neighborhood, (born, live)) => {
-
+                lifelike_show_screen.set_info(cfg, neighborhood, (born, live));
+                lifelike_show_screen.control(&mut current_scene, &mut toaster);
+                lifelike_show_screen.draw();
             }
         }
 

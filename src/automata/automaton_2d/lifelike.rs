@@ -1,4 +1,6 @@
-use macroquad::{color::WHITE, input::{KeyCode, is_key_down, is_key_pressed}, shapes::draw_rectangle, window::screen_width};
+use std::time::Instant;
+
+use macroquad::{color::{GREEN, WHITE}, input::{KeyCode, MouseButton, is_key_down, is_key_pressed, is_mouse_button_down, mouse_position}, shapes::{draw_rectangle, draw_rectangle_lines}, window::{screen_width}};
 
 use crate::{automata::automaton_2d::base::{Automaton2D, Automaton2DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
@@ -23,6 +25,10 @@ pub struct Lifelike {
     pub timer: Timer,
     pub advance_delayer: Delayer,
     pub move_delayer: Delayer,
+
+    is_editing: bool,
+    editing_cell_state: bool, // true if the cell is being changed to alive, false if dead
+    created: Instant,
 }
 
 impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
@@ -44,6 +50,10 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
             timer: Timer::new(),
             advance_delayer: Delayer::new(None),
             move_delayer: Delayer::new(None),
+
+            is_editing: false,
+            editing_cell_state: false,
+            created: Instant::now(),
         };
 
         s.apply_config(config);
@@ -66,14 +76,16 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
                 }
             }
             LifelikeConfig::RandomCenter(size) => {
-                for y in center_y_index-size..center_y_index+size {
-                    for x in center_x_index-size..center_x_index+size {
+                for y in center_y_index-(size/2)..center_y_index+(size/2) {
+                    for x in center_x_index-(size/2)..center_x_index+(size/2) {
                         self.info.data1[y][x] = rand::random_bool(0.5);
                     }
                 }
             }
             _ => {}
         }
+
+        self.created = Instant::now();
     }
 
     fn restart(&mut self) {
@@ -137,7 +149,10 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
     }
 
     fn control(&mut self) {
+        let mut editable = self.created.elapsed().as_millis() > 200;
+
         if self.advance_delayer.run_delayer(&[KeyCode::Space]) && self.timer.run_timer(&[KeyCode::Space]) {
+            editable = false;
             self.pass_time();
         }
 
@@ -153,6 +168,7 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
         ];
 
         if self.move_delayer.run_delayer(&move_keys) && self.timer.run_timer(&move_keys) {
+            editable = false;
             let mut movement = (0, 0);
             if is_key_down(KeyCode::Up) || is_key_down(KeyCode::W) {
                 movement.1 -= 1;
@@ -173,6 +189,21 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
         if is_key_pressed(KeyCode::R) {
             self.restart();
         }
+
+        if editable {
+            if !is_mouse_button_down(MouseButton::Left) {
+                self.is_editing = false;
+            } else {
+                if !self.is_editing {
+                    self.editing_cell_state = !self.info.mouse_get_cell();
+                    self.is_editing = true;
+                }
+
+                self.info.mouse_set_cell(self.editing_cell_state);
+            }
+        } else {
+            self.is_editing = false;
+        }
     }
 
     fn draw(&self) {
@@ -188,11 +219,22 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
                 }
             }
         }
+
+        let mouse_pos = mouse_position();
+        let cell_size = self.info.get_cell_size();
+        let cell_pos = (
+            (mouse_pos.0 / cell_size).floor() * cell_size,
+            (mouse_pos.1 / cell_size).floor() * cell_size
+        );
+        draw_rectangle_lines(
+            cell_pos.0, cell_pos.1, cell_size, cell_size, 
+            1.0, GREEN
+        );
     }
 }
 
 impl Lifelike {
-    fn set_neighborhood(&mut self, neighborhood: LifelikeNeighborhoodType) {
+    pub fn set_neighborhood(&mut self, neighborhood: LifelikeNeighborhoodType) {
         self.neighborhood = neighborhood;
     }
 }

@@ -1,4 +1,4 @@
-use macroquad::window::{screen_height, screen_width};
+use macroquad::{input::mouse_position, window::{screen_height, screen_width}};
 
 pub struct Automaton2DInfo<Data: PartialEq + PartialOrd> {
     pub frame_number: u128,
@@ -75,6 +75,34 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data
         self.use_data2 = !self.use_data2;
     }
 
+    pub fn mouse_get_cell(&self) -> Data {
+        let mouse_pos = mouse_position();
+        let cell_size = self.get_cell_size();
+
+        let cell_position = (
+            (mouse_pos.0 / cell_size).floor() as usize + self.seen_range_x.0,
+            (mouse_pos.1 / cell_size).floor() as usize + self.seen_range_y.0,
+        );
+
+        self.read_from(cell_position.0 as i32, cell_position.1 as i32)
+    }
+
+    pub fn mouse_set_cell(&mut self, value: Data) {
+        let mouse_pos = mouse_position();
+        let cell_size = self.get_cell_size();
+
+        let cell_position = (
+            (mouse_pos.0 / cell_size).floor() as usize + self.seen_range_x.0,
+            (mouse_pos.1 / cell_size).floor() as usize + self.seen_range_y.0,
+        );
+
+        self.write_data_in_place(cell_position.0 as i32, cell_position.1 as i32, value);
+    }
+
+    pub fn get_cell_size(&self) -> f32 {
+        screen_width() / (self.seen_range_x.1 - self.seen_range_x.0) as f32
+    }
+
     pub fn read_from(&self, x: i32, y: i32) -> Data {
         let width = self.get_width() as i32;
         let x_index: usize = (((x % width) + width) % width) as usize;
@@ -84,6 +112,18 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data
             self.data1[y_index][x_index]
         } else {
             self.data2[y_index][x_index]
+        }
+    }
+
+    pub fn write_data_in_place(&mut self, x: i32, y: i32, data: Data) {
+        let width = self.get_width() as i32;
+        let x_index: usize = (((x % width) + width) % width) as usize;
+        let y_index: usize = (((y % width) + width) % width) as usize;
+
+        if !self.use_data2 {
+            self.data1[y_index][x_index] = data;
+        } else {
+            self.data2[y_index][x_index] = data;
         }
     }
 
