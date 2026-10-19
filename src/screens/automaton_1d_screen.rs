@@ -10,21 +10,21 @@ impl Screen for Automaton1DScreen {
     fn get_buttons(&self) -> Vec<Button> {
         let button_top = screen_height() / 6.0;
 
-        let button1 = Button::new(
+        let elementary_button = Button::new(
             "ELEMENTARY AUTOMATON",
             (screen_width() / 4.0, button_top),
             None,
             None,
         );
 
-        let button2 = Button::new(
+        let extended_button = Button::new(
             "EXTENDED AUTOMATON",
-            (screen_width() / 4.0, button_top + button1.get_dimensions().1 + 20.0),
+            (screen_width() / 4.0, button_top + elementary_button.get_dimensions().1 + 20.0),
             None,
             None,
         );
 
-        vec![button1, button2]
+        vec![elementary_button, extended_button]
     }
 
     fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {

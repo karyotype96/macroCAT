@@ -1,6 +1,6 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 
-use crate::{MenuScreen, automata::automaton_1d::{base::{Automaton1D, Automaton1DInfo}, extended::{Extended, ExtendedConfig}}, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, automata::automaton_1d::{base::{Automaton1D}, extended::{Extended, ExtendedConfig}}, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct ExtendedShowScreen {
     pub is_init: bool,

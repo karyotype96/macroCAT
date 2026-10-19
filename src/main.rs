@@ -5,7 +5,7 @@ pub mod screens;
 
 use macroquad::prelude::*;
 
-use crate::{automata::automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -17,9 +17,13 @@ pub enum MenuScreen {
 
     ElementaryAutomatonOptions,
     ExtendedAutomatonOptions,
+
+    LifelikeAutomatonOptions,
     
     ElementaryAutomatonShow(ElementaryConfig, u8),
     ExtendedAutomatonShow(ExtendedConfig, u32),
+
+    LifelikeAutomatonShow(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16))
 }
 
 fn window_conf() -> Conf {
@@ -39,6 +43,7 @@ async fn main() {
 
     let mut automaton_type_screen = AutomatonTypeScreen {};
     let mut automaton_1d_screen = Automaton1DScreen {};
+    let mut automaton_2d_screen = Automaton2DScreen {};
 
     let mut elementary_settings_screen = ElementarySettingsScreen {
         checkboxes: Vec::new(),
@@ -56,7 +61,17 @@ async fn main() {
 
     let mut elementary_show_screen = ElementaryShowScreen::new();
     let mut extended_show_screen = ExtendedShowScreen::new();
-    
+
+    let mut lifelike_settings_screen = LifelikeSettingScreen {
+        born_boxes: Vec::new(),
+        live_boxes: Vec::new(),
+
+        cfg: LifelikeConfig::None,
+        neighborhood: LifelikeNeighborhoodType::Moore,
+        rule: (0, 0)
+    };
+    lifelike_settings_screen.init();
+
     loop {
         clear_background(BLACK);
 
@@ -75,7 +90,8 @@ async fn main() {
                 automaton_1d_screen.draw();
             }
             MenuScreen::SelectAutomaton2D => {
-                
+                automaton_2d_screen.control(&mut current_scene, &mut toaster);
+                automaton_2d_screen.draw();
             }
             MenuScreen::SelectAutomaton3D => {
 
@@ -100,39 +116,18 @@ async fn main() {
                 extended_show_screen.control(&mut current_scene, &mut toaster);
                 extended_show_screen.draw();
             }
+
+            MenuScreen::LifelikeAutomatonOptions => {
+                lifelike_settings_screen.control(&mut current_scene, &mut toaster);
+                lifelike_settings_screen.draw();
+            }
+
+            MenuScreen::LifelikeAutomatonShow(cfg, neighborhood, (born, live)) => {
+
+            }
         }
 
         toaster.run();
-
-        /*
-        if is_key_pressed(KeyCode::Backspace) {
-            toaster.flush();
-            rule = random();
-            toaster.add_message(
-                format!("Rule selected: {}", rule).as_str(),
-                None,
-                None,
-                Some(10000),
-                None
-            );
-
-            el = Extended::new(2000, cfg, rule);
-        }
-        if is_key_pressed(KeyCode::M) {
-            toaster.flush();
-            toaster.add_message(
-                format!("Rule selected: {}", rule).as_str(),
-                None,
-                None,
-                Some(10000),
-                None
-            );
-        }
-
-        el.control();
-        el.draw();
-        toaster.run();
-        */
 
         next_frame().await
     }

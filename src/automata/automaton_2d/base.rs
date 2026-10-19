@@ -1,0 +1,115 @@
+use macroquad::window::{screen_height, screen_width};
+
+pub struct Automaton2DInfo<Data: PartialEq + PartialOrd> {
+    pub frame_number: u128,
+    pub data1: Vec<Vec<Data>>,
+    pub data2: Vec<Vec<Data>>,
+    pub seen_range_x: (usize, usize),
+    pub seen_range_y: (usize, usize),
+
+    use_data2: bool,
+}
+
+impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data> {
+    pub fn new(width: usize, height: usize, seen_range: (usize, usize)) -> Self {
+        let cell_width = screen_width() / (seen_range.1 - seen_range.0) as f32;
+        let view_height = (screen_height() / cell_width as f32) as usize;
+
+        let seen_range_y = (height / 2 - view_height / 2, height / 2 + view_height / 2);
+
+        let mut data: Vec<Vec<Data>> = Vec::new();
+        for _ in 0..height {
+            data.push(vec![Data::default(); width]);
+        }
+
+        Self {
+            frame_number: 0,
+            data1: data.clone(),
+            data2: data.clone(),
+            seen_range_x: seen_range,
+            seen_range_y,
+
+            use_data2: false
+        }
+    }
+    pub fn get_width(&self) -> usize {
+        self.data1[0].len()
+    }
+
+    pub fn get_height(&self) -> usize {
+        self.data1.len()
+    }
+
+    pub fn move_window(&mut self, direction: (i32, i32)) {
+        if direction.0 < 0 {
+            if self.seen_range_x.0 > 0 {
+                self.seen_range_x.0 -= 1;
+                self.seen_range_x.1 -= 1;
+            }
+        }
+
+        if direction.0 > 0 {
+            if self.seen_range_x.1 < self.data1[0].len()-1 {
+                self.seen_range_x.0 += 1;
+                self.seen_range_x.1 += 1;
+            }
+        }
+
+        if direction.1 < 0 {
+            if self.seen_range_y.0 > 0 {
+                self.seen_range_y.0 -= 1;
+                self.seen_range_y.1 -= 1;
+            }
+        }
+
+        if direction.1 > 0 {
+            if self.seen_range_y.1 < self.data1.len()-1 {
+                self.seen_range_y.0 += 1;
+                self.seen_range_y.1 += 1;
+            }
+        }
+    }
+
+    pub fn increment_time(&mut self) {
+        self.frame_number += 1;
+        self.use_data2 = !self.use_data2;
+    }
+
+    pub fn read_from(&self, x: i32, y: i32) -> Data {
+        let width = self.get_width() as i32;
+        let x_index: usize = (((x % width) + width) % width) as usize;
+        let y_index: usize = (((y % width) + width) % width) as usize;
+        
+        if !self.use_data2 {
+            self.data1[y_index][x_index]
+        } else {
+            self.data2[y_index][x_index]
+        }
+    }
+
+    pub fn write_data(&mut self, x: i32, y: i32, data: Data) {
+        let width = self.get_width() as i32;
+        let x_index: usize = (((x % width) + width) % width) as usize;
+        let y_index: usize = (((y % width) + width) % width) as usize;
+
+        if !self.use_data2 {
+            self.data2[y_index][x_index] = data;
+        } else {
+            self.data1[y_index][x_index] = data;
+        }
+    }
+}
+
+pub trait Automaton2D<Data: Clone + Default + PartialEq + PartialOrd, Config, Rule> {
+    fn new(width: usize, height: usize, config: Config, rule: Rule) -> Self;
+    fn apply_config(&mut self, config: Config);
+
+    fn restart(&mut self);
+    fn pass_time(&mut self);
+
+    fn move_window(&mut self, direction: (i32, i32));
+
+    fn control(&mut self);
+
+    fn draw(&self);
+}
