@@ -1,7 +1,7 @@
 use macroquad::{color::{BLUE, WHITE}, input::{KeyCode, is_key_pressed}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 use rand::random_range;
 
-use crate::{MenuScreen, automata::automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}, screens::{button::Button, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, automata::automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}, screens::{button::MenuButton, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct LifelikeSettingScreen {
     pub born_boxes: Vec<Checkbox>, // determines the rule for when a cell is born
@@ -35,14 +35,14 @@ impl Screen for LifelikeSettingScreen {
         }
     }
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         let config_button_label = match self.cfg {
             LifelikeConfig::None => String::from("CONFIG: NONE"),
             LifelikeConfig::AllRandom => String::from("CONFIG: ALL RANDOM"),
             LifelikeConfig::RandomCenter(n) => format!("CONFIG: RANDOM CENTER {v}x{v}", v=n),
         };
 
-        let config_button = Button::new(
+        let config_button = MenuButton::new(
             config_button_label.as_str(),
             (screen_width() / 2.0 - 200.0, screen_height() * 2.0 / 3.0),
             None,
@@ -54,21 +54,21 @@ impl Screen for LifelikeSettingScreen {
             LifelikeNeighborhoodType::VonNeumann => String::from("NEIGHBORHOOD: VON NEUMANN"),
         };
 
-        let neighborhood_button = Button::new(
+        let neighborhood_button = MenuButton::new(
             neighborhood_button_label.as_str(),
             (screen_width() / 2.0 + 200.0, screen_height() * 2.0 / 3.0),
             None,
             None
         );
 
-        let start_button = Button::new(
+        let start_button = MenuButton::new(
             "START!",
             (screen_width() / 2.0, screen_height() * 7.0 / 8.0),
             None,
             Some(BLUE),
         );
 
-        let random_rule_button = Button::new(
+        let random_rule_button = MenuButton::new(
             "SELECT RANDOM RULE",
             (screen_width() / 2.0, screen_height() / 2.0),
             None,
@@ -142,16 +142,28 @@ impl Screen for LifelikeSettingScreen {
 
         let rule = self.rule_to_string();
         let label = match rule.as_str() {
+            "B0123478/S34678" => "InverseLife",
+            "B1/S1" => "Gnarl",
             "B1357/S1357" => "Replicator",
             "B2/S" => "Seeds",
+            "B234/S" => "Serviettes",
             "B3/S012345678" => "Life Without Death",
+            "B3/S1234" => "Mazectric",
+            "B3/S12345" => "Maze",
             "B3/S23" => "Conway's Game of Life",
+            "B3/S45678" => "Coral",
             "B34/S34" => "34 Life",
+            "B345/S4567" => "Assimiliation",
             "B35678/S5678" => "Diamoeba",
+            "B357/S1358" => "Amoeba",
+            "B357/S238" => "Pseudo Life",
             "B36/S125" => "2x2",
             "B36/S23" => "HighLife",
+            "B3678/S235678" => "Stains",
             "B3678/S34678" => "Day & Night",
             "B368/S245" => "Morley",
+            "B378/S235678" => "Coagulations",
+            "B45678/S2345" => "WalledCities",
             "B4678/S35678" => "Anneal",
             _ => "",
         };
@@ -222,7 +234,6 @@ impl LifelikeSettingScreen {
         let live_rule: u16 = random_range(0..512);
 
         self.rule = (born_rule, live_rule);
-        println!("rule = {:b}:{:b}", born_rule, live_rule);
         for i in 0..self.born_boxes.len() {
             let bit_index = 8-i;
 

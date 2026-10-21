@@ -1,23 +1,23 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::Button, screen::Screen}, toaster::toaster::{Toaster}};
+use crate::{MenuScreen, screens::{button::MenuButton, screen::Screen}, toaster::toaster::{Toaster}};
 
 pub struct Automaton1DScreen;
 
 impl Screen for Automaton1DScreen {
     fn init(&mut self) { }
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         let button_top = screen_height() / 6.0;
 
-        let elementary_button = Button::new(
+        let elementary_button = MenuButton::new(
             "ELEMENTARY AUTOMATON",
             (screen_width() / 4.0, button_top),
             None,
             None,
         );
 
-        let extended_button = Button::new(
+        let extended_button = MenuButton::new(
             "EXTENDED AUTOMATON",
             (screen_width() / 4.0, button_top + elementary_button.get_dimensions().1 + 20.0),
             None,

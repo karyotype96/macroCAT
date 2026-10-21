@@ -5,7 +5,7 @@ pub mod screens;
 
 use macroquad::prelude::*;
 
-use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::{brians_brain::BriansBrainConfig, lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Copy, Clone)]
 pub enum MenuScreen {
@@ -19,11 +19,13 @@ pub enum MenuScreen {
     ExtendedAutomatonOptions,
 
     LifelikeAutomatonOptions,
+    BriansBrainOptions,
     
     ElementaryAutomatonShow(ElementaryConfig, u8),
     ExtendedAutomatonShow(ExtendedConfig, u32),
 
-    LifelikeAutomatonShow(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16))
+    LifelikeAutomatonShow(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16)),
+    BriansBrainAutomatonShow(BriansBrainConfig)
 }
 
 fn window_conf() -> Conf {
@@ -72,7 +74,12 @@ async fn main() {
     };
     lifelike_settings_screen.init();
 
+    let mut brians_brain_settings_screen = BriansBrainSettingsScreen {
+        cfg: BriansBrainConfig::AllRandom
+    };
+
     let mut lifelike_show_screen = LifelikeShowScreen::new();
+    let mut brians_brain_show_screen = BriansBrainShowScreen::new();
 
     loop {
         clear_background(BLACK);
@@ -123,11 +130,20 @@ async fn main() {
                 lifelike_settings_screen.control(&mut current_scene, &mut toaster);
                 lifelike_settings_screen.draw();
             }
+            MenuScreen::BriansBrainOptions => {
+                brians_brain_settings_screen.control(&mut current_scene, &mut toaster);
+                brians_brain_settings_screen.draw();
+            }
 
             MenuScreen::LifelikeAutomatonShow(cfg, neighborhood, (born, live)) => {
                 lifelike_show_screen.set_info(cfg, neighborhood, (born, live));
                 lifelike_show_screen.control(&mut current_scene, &mut toaster);
                 lifelike_show_screen.draw();
+            }
+            MenuScreen::BriansBrainAutomatonShow(cfg) => {
+                brians_brain_show_screen.set_info(cfg);
+                brians_brain_show_screen.control(&mut current_scene, &mut toaster);
+                brians_brain_show_screen.draw();
             }
         }
 

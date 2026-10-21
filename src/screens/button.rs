@@ -5,7 +5,7 @@ const DEFAULT_COLOR: Color = WHITE;
 
 const OFFSET: f32 = 24.0;
 
-pub struct Button {
+pub struct MenuButton {
     pub label: String,
 
     position: (f32, f32),
@@ -14,7 +14,7 @@ pub struct Button {
     font_size: u16,
 }
 
-impl Button {
+impl MenuButton {
     pub fn new(label: &str, position: (f32, f32), font_size: Option<u16>, color: Option<Color>) -> Self {
         let fsize = match font_size {
             Some(s) => s,

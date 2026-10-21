@@ -1,6 +1,6 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 
-use crate::{MenuScreen, automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, automata::automaton_1d::{base::Automaton1D, elementary::{Elementary, ElementaryConfig}}, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct ElementaryShowScreen {
     pub is_init: bool,
@@ -10,7 +10,7 @@ pub struct ElementaryShowScreen {
 impl Screen for ElementaryShowScreen {
     fn init(&mut self) {}
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         vec![]
     }
 

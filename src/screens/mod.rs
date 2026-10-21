@@ -13,5 +13,7 @@ pub mod elementary_show;
 pub mod extended_show;
 
 pub mod lifelike_settings;
+pub mod brians_brain_settings;
 
 pub mod lifelike_show;
+pub mod brians_brain_show;

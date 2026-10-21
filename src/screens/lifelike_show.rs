@@ -1,6 +1,6 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 
-use crate::{MenuScreen, automata::automaton_2d::{base::Automaton2D, lifelike::{Lifelike, LifelikeConfig, LifelikeNeighborhoodType}}, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, automata::automaton_2d::{base::Automaton2D, lifelike::{Lifelike, LifelikeConfig, LifelikeNeighborhoodType}}, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct LifelikeShowScreen {
     pub is_init: bool,
@@ -10,7 +10,7 @@ pub struct LifelikeShowScreen {
 impl Screen for LifelikeShowScreen {
     fn init(&mut self) {}
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         vec![]
     }
 

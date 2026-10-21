@@ -1,28 +1,28 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct AutomatonTypeScreen;
 
 impl Screen for AutomatonTypeScreen {
     fn init(&mut self) { }
 
-    fn get_buttons(&self) -> Vec<Button> {
-        let button1 = Button::new(
+    fn get_buttons(&self) -> Vec<MenuButton> {
+        let button1 = MenuButton::new(
             "1D Automata",
             (screen_width() / 2.0, screen_height() / 3.0),
             None,
             None,
         );
 
-        let button2 = Button::new(
+        let button2 = MenuButton::new(
             "2D Automata",
             (screen_width() / 2.0, screen_height() / 3.0 + button1.get_dimensions().1 + 20.0),
             None,
             None,
         );
 
-        let button3 = Button::new(
+        let button3 = MenuButton::new(
             "3D Automata",
             (screen_width() / 2.0, screen_height() / 3.0 + button1.get_dimensions().1 + button2.get_dimensions().1 + 40.0),
             None,

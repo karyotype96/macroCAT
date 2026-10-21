@@ -1,23 +1,31 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::Button, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, screens::{button::{MenuButton}, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct Automaton2DScreen;
 
 impl Screen for Automaton2DScreen {
     fn init(&mut self) {}
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         let button_top = screen_height() / 6.0;
 
-        let lifelike_button = Button::new(
+        let lifelike_button = MenuButton::new(
             "LIFELIKE AUTOMATON",
             (screen_width() / 4.0, button_top),
             None,
             None
         );
 
-        vec![lifelike_button]
+        let height = lifelike_button.get_dimensions().1;
+        let brians_brain_button = MenuButton::new(
+            "BRIAN'S BRAIN",
+            (screen_width() / 4.0, button_top + height + 8.0),
+            None,
+            None
+        );
+
+        vec![lifelike_button, brians_brain_button]
     }
 
     fn control(&mut self, current_screen: &mut MenuScreen, _toaster: &mut Toaster) {
@@ -25,6 +33,10 @@ impl Screen for Automaton2DScreen {
         
         if buttons[0].control() {
             *current_screen = MenuScreen::LifelikeAutomatonOptions;
+        }
+
+        if buttons[1].control() {
+            *current_screen = MenuScreen::BriansBrainOptions;
         }
     }
 

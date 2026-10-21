@@ -1,7 +1,7 @@
 use macroquad::{color::{BLACK, BLUE, GREEN, WHITE}, input::{KeyCode, is_key_pressed}, shapes::{draw_rectangle, draw_rectangle_lines}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 use rand::random;
 
-use crate::{MenuScreen, automata::automaton_1d::{extended::ExtendedConfig}, screens::{button::Button, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
+use crate::{MenuScreen, automata::automaton_1d::{extended::ExtendedConfig}, screens::{button::MenuButton, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
 
 pub struct ExtendedSettingsScreen {
     pub checkboxes: Vec<Checkbox>,
@@ -23,28 +23,28 @@ impl Screen for ExtendedSettingsScreen {
         }
     }
 
-    fn get_buttons(&self) -> Vec<Button> {
+    fn get_buttons(&self) -> Vec<MenuButton> {
         let button_label = match self.cfg {
             ExtendedConfig::CenterPixel => String::from("Center Pixel"),
             ExtendedConfig::AllRandom => String::from("All Random"),
             ExtendedConfig::RandomCenter(n) => format!("Random Center {}", n*2-1)
         };
 
-        let config_button = Button::new(
+        let config_button = MenuButton::new(
             button_label.as_str(),
             (screen_width() / 2.0, screen_height() * 3.0 / 4.0),
             None,
             None
         );
 
-        let start_button = Button::new(
+        let start_button = MenuButton::new(
             "START!",
             (screen_width() / 2.0, screen_height() * 7.0 / 8.0),
             None,
             Some(BLUE),
         );
 
-        let random_rule_button = Button::new(
+        let random_rule_button = MenuButton::new(
             "Select random rule",
             (screen_width() / 2.0, screen_height() / 2.0),
             None,
