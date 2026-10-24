@@ -1,7 +1,7 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 use petgraph::{Graph, graph::NodeIndex};
 
-use crate::{screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::{LifelikeSettingsScreen}, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{screens::{automata_1d::{automaton_1d_screen::Automaton1DScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen}, automata_2d::{automaton_2d_screen::Automaton2DScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, lifelike_settings::LifelikeSettingsScreen, lifelike_show::LifelikeShowScreen}, automaton_type_screen::AutomatonTypeScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Default)]
 pub enum MenuScreen {
@@ -107,7 +107,7 @@ impl Nav {
             (s2da, lao),
 
             (lao, las),
-            
+
             (bbo, bbs)
         ]);
 
