@@ -5,28 +5,7 @@ pub mod screens;
 
 use macroquad::prelude::*;
 
-use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::ExtendedConfig}, automaton_2d::{brians_brain::BriansBrainConfig, lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::LifelikeSettingScreen, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
-
-#[derive(Copy, Clone)]
-pub enum MenuScreen {
-    SelectAutomatonType,
-
-    SelectAutomaton1D,
-    SelectAutomaton2D,
-    SelectAutomaton3D,
-
-    ElementaryAutomatonOptions,
-    ExtendedAutomatonOptions,
-
-    LifelikeAutomatonOptions,
-    BriansBrainOptions,
-    
-    ElementaryAutomatonShow(ElementaryConfig, u8),
-    ExtendedAutomatonShow(ExtendedConfig, u32),
-
-    LifelikeAutomatonShow(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16)),
-    BriansBrainAutomatonShow(BriansBrainConfig)
-}
+use crate::screens::nav::Nav;
 
 fn window_conf() -> Conf {
     Conf {
@@ -39,10 +18,9 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut current_scene = MenuScreen::SelectAutomatonType;
+    let mut nav = Nav::new();
 
-    let mut toaster = Toaster::new();
-
+    /*
     let mut automaton_type_screen = AutomatonTypeScreen {};
     let mut automaton_1d_screen = Automaton1DScreen {};
     let mut automaton_2d_screen = Automaton2DScreen {};
@@ -80,6 +58,7 @@ async fn main() {
 
     let mut lifelike_show_screen = LifelikeShowScreen::new();
     let mut brians_brain_show_screen = BriansBrainShowScreen::new();
+    */
 
     loop {
         clear_background(BLACK);
@@ -88,6 +67,10 @@ async fn main() {
             break;
         }
 
+        nav.control();
+        nav.draw();
+
+        /*
         match current_scene {
             MenuScreen::SelectAutomatonType => {
                 automaton_type_screen.control(&mut current_scene, &mut toaster);
@@ -140,14 +123,12 @@ async fn main() {
                 lifelike_show_screen.control(&mut current_scene, &mut toaster);
                 lifelike_show_screen.draw();
             }
-            MenuScreen::BriansBrainAutomatonShow(cfg) => {
+            MenuScreen::BriansBrainShow(cfg) => {
                 brians_brain_show_screen.set_info(cfg);
                 brians_brain_show_screen.control(&mut current_scene, &mut toaster);
                 brians_brain_show_screen.draw();
             }
-        }
-
-        toaster.run();
+        } */
 
         next_frame().await
     }

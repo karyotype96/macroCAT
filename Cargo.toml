@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 macroquad = "0.4.16"
+petgraph = "0.8.3"
 rand = "0.10.3"
 
 [profile.dev]

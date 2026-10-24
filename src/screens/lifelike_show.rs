@@ -1,26 +1,23 @@
-use macroquad::input::{KeyCode, is_key_pressed};
-
-use crate::{MenuScreen, automata::automaton_2d::{base::Automaton2D, lifelike::{Lifelike, LifelikeConfig, LifelikeNeighborhoodType}}, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_2d::{base::Automaton2D, lifelike::{Lifelike, LifelikeConfig, LifelikeNeighborhoodType}}, screens::{button::MenuButton, screen::Screen}};
 
 pub struct LifelikeShowScreen {
     pub is_init: bool,
     pub el: Lifelike,
 }
 
-impl Screen for LifelikeShowScreen {
+impl Screen<()> for LifelikeShowScreen {
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
         vec![]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen, _toaster: &mut Toaster) {
+    fn get_info(&self) {}
+
+    fn control(&mut self) -> Option<usize> {
         self.el.control();
 
-        if is_key_pressed(KeyCode::Q) {
-            *current_screen = MenuScreen::LifelikeAutomatonOptions;
-            self.reset();
-        }
+        None
     }
 
     fn draw(&self) {

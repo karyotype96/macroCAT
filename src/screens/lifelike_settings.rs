@@ -1,9 +1,9 @@
-use macroquad::{color::{BLUE, WHITE}, input::{KeyCode, is_key_pressed}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
+use macroquad::{color::{BLUE, WHITE}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 use rand::random_range;
 
-use crate::{MenuScreen, automata::automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}, screens::{button::MenuButton, checkbox::Checkbox, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_2d::lifelike::{LifelikeConfig, LifelikeNeighborhoodType}, screens::{button::MenuButton, checkbox::Checkbox, screen::Screen}};
 
-pub struct LifelikeSettingScreen {
+pub struct LifelikeSettingsScreen {
     pub born_boxes: Vec<Checkbox>, // determines the rule for when a cell is born
     pub live_boxes: Vec<Checkbox>, // determines the rule for when a cell remains alive
 
@@ -12,7 +12,7 @@ pub struct LifelikeSettingScreen {
     pub rule: (u16, u16)
 }
 
-impl Screen for LifelikeSettingScreen {
+impl Screen<(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16))> for LifelikeSettingsScreen {
     fn init(&mut self) {
         let left_center = screen_width() / 3.0;
         let right_center = screen_width() * 2.0 / 3.0;
@@ -78,12 +78,11 @@ impl Screen for LifelikeSettingScreen {
         vec![config_button, neighborhood_button, start_button, random_rule_button]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
-        if is_key_pressed(KeyCode::Q) {
-            toaster.flush();
-            *current_screen = MenuScreen::SelectAutomaton2D;
-        }
+    fn get_info(&self) -> (LifelikeConfig, LifelikeNeighborhoodType, (u16, u16)) {
+        (self.cfg, self.neighborhood, self.rule)
+    }
 
+    fn control(&mut self) -> Option<usize> {
         let buttons = self.get_buttons();
 
         if buttons[0].control() {
@@ -102,20 +101,7 @@ impl Screen for LifelikeSettingScreen {
         }
 
         if buttons[2].control() {
-            toaster.flush();
-            toaster.add_message(
-                format!("Rule: {}", self.rule_to_string()).as_str(),
-                None, None, None, None
-            );
-            toaster.add_message(
-                "Press SPACE to advance time, and arrow keys or WASD to move the view.", 
-                None, None, None, None
-            );
-            toaster.add_message(
-                "Press R to reset the automaton, and Q to go back to settings.", 
-                None, None, None, None
-            );
-            *current_screen = MenuScreen::LifelikeAutomatonShow(self.cfg, self.neighborhood, self.rule);
+            return Some(0);
         }
 
         if buttons[3].control() {
@@ -135,6 +121,8 @@ impl Screen for LifelikeSettingScreen {
                 self.flip_live_bit(bit, self.live_boxes[i].checked());
             }
         }
+
+        None
     }
 
     fn draw(&self) {
@@ -212,7 +200,21 @@ impl Screen for LifelikeSettingScreen {
     }
 }
 
-impl LifelikeSettingScreen {
+impl LifelikeSettingsScreen {
+    pub fn new() -> Self {
+        let mut screen = LifelikeSettingsScreen {
+            born_boxes: Vec::new(),
+            live_boxes: Vec::new(),
+
+            cfg: LifelikeConfig::None,
+            neighborhood: LifelikeNeighborhoodType::Moore,
+            rule: (0, 0)
+        };
+
+        screen.init();
+        screen
+    }
+
     fn rule_to_string(&self) -> String {
         let mut born_rule = String::new();
         let mut live_rule = String::new();

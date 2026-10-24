@@ -1,10 +1,10 @@
 use macroquad::{color::WHITE, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, screens::{button::MenuButton, screen::Screen}, toaster::toaster::{Toaster}};
+use crate::{screens::{button::MenuButton, screen::Screen}};
 
 pub struct Automaton1DScreen;
 
-impl Screen for Automaton1DScreen {
+impl Screen<()> for Automaton1DScreen {
     fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -27,35 +27,44 @@ impl Screen for Automaton1DScreen {
         vec![elementary_button, extended_button]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
+    fn get_info(&self) {
+        
+    }
+
+    fn control(&mut self) -> Option<usize> {
         let buttons = self.get_buttons();
         
         if buttons[0].control() {
-            toaster.flush();
-            toaster.add_message(
+            /*
+            nav.toaster.flush();
+            nav.toaster.add_message(
                 "Hit the checkboxes to change the bits of the automaton rule.", 
                 None, None, None, None
             );
-            toaster.add_message(
+            nav.toaster.add_message(
                 "Press the button just above the \"START!\" button to change the starting cell config.", 
                 None, None, None, None
             );
+            */
 
-            *current_screen = MenuScreen::ElementaryAutomatonOptions;
+            return Some(1);
         }
         if buttons[1].control() {
-            toaster.flush();
-            toaster.add_message(
+            /*
+            nav.toaster.flush();
+            nav.toaster.add_message(
                 "Hit the checkboxes to change the bits of the automaton rule.", 
                 None, None, None, None
             );
-            toaster.add_message(
+            nav.toaster.add_message(
                 "Press the button in the middle of the screen to change the starting cell config.", 
                 None, None, None, None
-            );
-            
-            *current_screen = MenuScreen::ExtendedAutomatonOptions;
+            ); 
+            */
+            return Some(0);
         }
+
+        None
     }
 
     fn draw(&self) {

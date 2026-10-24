@@ -153,6 +153,12 @@ impl Toaster {
         );
     }
 
+    pub fn quick_msg(&mut self, msg: &str) {
+        self.add_message(msg,
+            None, None, None, None
+        );
+    }
+
     pub fn flush(&mut self) {
         self.toasts.clear();
     }

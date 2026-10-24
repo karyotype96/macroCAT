@@ -1,8 +1,9 @@
-use crate::{MenuScreen, screens::{button::MenuButton}, toaster::toaster::Toaster};
+use crate::{screens::{button::MenuButton}};
 
-pub trait Screen {
+pub trait Screen<T> {
     fn init(&mut self);
     fn get_buttons(&self) -> Vec<MenuButton>;
-    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster);
+    fn get_info(&self) -> T;
+    fn control(&mut self) -> Option<usize>;
     fn draw(&self);
 }

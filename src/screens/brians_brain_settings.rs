@@ -1,12 +1,12 @@
-use macroquad::{color::{BLUE, WHITE}, input::{KeyCode, is_key_pressed}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
+use macroquad::{color::{BLUE, WHITE}, text::{draw_text, measure_text}, window::{screen_height, screen_width}};
 
-use crate::{MenuScreen, automata::automaton_2d::{brians_brain::BriansBrainConfig}, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_2d::{brians_brain::BriansBrainConfig}, screens::{button::MenuButton, screen::Screen}};
 
 pub struct BriansBrainSettingsScreen {
     pub cfg: BriansBrainConfig,
 }
 
-impl Screen for BriansBrainSettingsScreen {
+impl Screen<BriansBrainConfig> for BriansBrainSettingsScreen {
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -32,12 +32,11 @@ impl Screen for BriansBrainSettingsScreen {
         vec![config_button, start_button]
     }
 
-    fn control(&mut self, current_screen: &mut MenuScreen, toaster: &mut Toaster) {
-        if is_key_pressed(KeyCode::Q) {
-            toaster.flush();
-            *current_screen = MenuScreen::SelectAutomaton2D;
-        }
+    fn get_info(&self) -> BriansBrainConfig {
+        self.cfg
+    }
 
+    fn control(&mut self) -> Option<usize> {
         let buttons = self.get_buttons();
 
         if buttons[0].control() {
@@ -48,17 +47,10 @@ impl Screen for BriansBrainSettingsScreen {
         }
 
         if buttons[1].control() {
-            toaster.flush();
-            toaster.add_message(
-                "Press SPACE to advance time, and LEFT/RIGHT or A/D to move the view.", 
-                None, None, None, None
-            );
-            toaster.add_message(
-                "Press R to reset the automaton, and Q to go back to settings.", 
-                None, None, None, None
-            );
-            *current_screen = MenuScreen::BriansBrainAutomatonShow(self.cfg);
+            return Some(0);
         }
+
+        return None;
     }
 
     fn draw(&self) {
@@ -81,5 +73,17 @@ impl Screen for BriansBrainSettingsScreen {
         for b in buttons.iter() {
             b.draw();
         }
+    }
+}
+
+impl BriansBrainSettingsScreen {
+    pub fn new() -> Self {
+        let mut s = Self {
+            cfg: BriansBrainConfig::AllRandom
+        };
+
+        s.init();
+
+        s
     }
 }

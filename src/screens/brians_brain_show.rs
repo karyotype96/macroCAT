@@ -1,26 +1,23 @@
-use macroquad::input::{KeyCode, is_key_pressed};
-
-use crate::{MenuScreen, automata::automaton_2d::{base::Automaton2D, brians_brain::{BriansBrain, BriansBrainConfig, DummyRule}}, screens::{button::MenuButton, screen::Screen}, toaster::toaster::Toaster};
+use crate::{automata::automaton_2d::{base::Automaton2D, brians_brain::{BriansBrain, BriansBrainConfig, DummyRule}}, screens::{button::MenuButton, screen::Screen}};
 
 pub struct BriansBrainShowScreen {
     pub is_init: bool,
     pub el: BriansBrain,
 }
 
-impl Screen for BriansBrainShowScreen {
+impl Screen<()> for BriansBrainShowScreen {
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
         vec![]
     }
+
+    fn get_info(&self) { }
     
-    fn control(&mut self, current_screen: &mut MenuScreen, _toaster: &mut Toaster) {
+    fn control(&mut self) -> Option<usize> {
         self.el.control();
 
-        if is_key_pressed(KeyCode::Q) {
-            *current_screen = MenuScreen::BriansBrainOptions;
-            self.reset();
-        }
+        None
     }
 
     fn draw(&self) {
