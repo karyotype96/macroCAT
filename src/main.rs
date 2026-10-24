@@ -20,46 +20,6 @@ fn window_conf() -> Conf {
 async fn main() {
     let mut nav = Nav::new();
 
-    /*
-    let mut automaton_type_screen = AutomatonTypeScreen {};
-    let mut automaton_1d_screen = Automaton1DScreen {};
-    let mut automaton_2d_screen = Automaton2DScreen {};
-
-    let mut elementary_settings_screen = ElementarySettingsScreen {
-        checkboxes: Vec::new(),
-        cfg: ElementaryConfig::CenterPixel,
-        rule: 0
-    };
-    elementary_settings_screen.init();
-
-    let mut extended_settings_screen = ExtendedSettingsScreen {
-        checkboxes: Vec::new(),
-        cfg: ExtendedConfig::CenterPixel,
-        rule: 0
-    };
-    extended_settings_screen.init();
-
-    let mut elementary_show_screen = ElementaryShowScreen::new();
-    let mut extended_show_screen = ExtendedShowScreen::new();
-
-    let mut lifelike_settings_screen = LifelikeSettingScreen {
-        born_boxes: Vec::new(),
-        live_boxes: Vec::new(),
-
-        cfg: LifelikeConfig::None,
-        neighborhood: LifelikeNeighborhoodType::Moore,
-        rule: (0, 0)
-    };
-    lifelike_settings_screen.init();
-
-    let mut brians_brain_settings_screen = BriansBrainSettingsScreen {
-        cfg: BriansBrainConfig::AllRandom
-    };
-
-    let mut lifelike_show_screen = LifelikeShowScreen::new();
-    let mut brians_brain_show_screen = BriansBrainShowScreen::new();
-    */
-
     loop {
         clear_background(BLACK);
 
@@ -69,66 +29,6 @@ async fn main() {
 
         nav.control();
         nav.draw();
-
-        /*
-        match current_scene {
-            MenuScreen::SelectAutomatonType => {
-                automaton_type_screen.control(&mut current_scene, &mut toaster);
-                automaton_type_screen.draw();
-            }
-
-            MenuScreen::SelectAutomaton1D => {
-                automaton_1d_screen.control(&mut current_scene, &mut toaster);
-                automaton_1d_screen.draw();
-            }
-            MenuScreen::SelectAutomaton2D => {
-                automaton_2d_screen.control(&mut current_scene, &mut toaster);
-                automaton_2d_screen.draw();
-            }
-            MenuScreen::SelectAutomaton3D => {
-
-            }
-
-            MenuScreen::ElementaryAutomatonOptions => {
-                elementary_settings_screen.control(&mut current_scene, &mut toaster);
-                elementary_settings_screen.draw();
-            }
-            MenuScreen::ExtendedAutomatonOptions => {
-                extended_settings_screen.control(&mut current_scene, &mut toaster);
-                extended_settings_screen.draw();
-            }
-
-            MenuScreen::ElementaryAutomatonShow(cfg, rule) => {
-                elementary_show_screen.set_info(cfg, rule);
-                elementary_show_screen.control(&mut current_scene, &mut toaster);
-                elementary_show_screen.draw();
-            }
-            MenuScreen::ExtendedAutomatonShow(cfg, rule) => {
-                extended_show_screen.set_info(cfg, rule);
-                extended_show_screen.control(&mut current_scene, &mut toaster);
-                extended_show_screen.draw();
-            }
-
-            MenuScreen::LifelikeAutomatonOptions => {
-                lifelike_settings_screen.control(&mut current_scene, &mut toaster);
-                lifelike_settings_screen.draw();
-            }
-            MenuScreen::BriansBrainOptions => {
-                brians_brain_settings_screen.control(&mut current_scene, &mut toaster);
-                brians_brain_settings_screen.draw();
-            }
-
-            MenuScreen::LifelikeAutomatonShow(cfg, neighborhood, (born, live)) => {
-                lifelike_show_screen.set_info(cfg, neighborhood, (born, live));
-                lifelike_show_screen.control(&mut current_scene, &mut toaster);
-                lifelike_show_screen.draw();
-            }
-            MenuScreen::BriansBrainShow(cfg) => {
-                brians_brain_show_screen.set_info(cfg);
-                brians_brain_show_screen.control(&mut current_scene, &mut toaster);
-                brians_brain_show_screen.draw();
-            }
-        } */
 
         next_frame().await
     }

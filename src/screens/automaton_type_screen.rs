@@ -38,10 +38,10 @@ impl Screen<()> for AutomatonTypeScreen {
         let buttons = self.get_buttons();
         
         if buttons[0].control() {
-            return Some(1);
+            return Some(0);
         }
         if buttons[1].control() {
-            return Some(0);
+            return Some(1);
         }
         if buttons[2].control() {
             return None;

@@ -1,26 +1,31 @@
 use macroquad::input::{KeyCode, is_key_pressed};
-use petgraph::{Graph, graph::NodeIndex, visit::NodeRef};
+use petgraph::{Graph, graph::NodeIndex};
 
-use crate::{automata::{automaton_1d::{elementary::ElementaryConfig, extended::{self, Extended, ExtendedConfig}}, automaton_2d::{brians_brain::BriansBrainConfig, lifelike::{LifelikeConfig, LifelikeNeighborhoodType}}}, screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::{LifelikeSettingsScreen}, lifelike_show::LifelikeShowScreen, nav::MenuScreen::{SelectAutomaton1D, SelectAutomaton2D}, screen::Screen}, toaster::toaster::Toaster};
+use crate::{screens::{automaton_1d_screen::Automaton1DScreen, automaton_2d_screen::Automaton2DScreen, automaton_type_screen::AutomatonTypeScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, lifelike_settings::{LifelikeSettingsScreen}, lifelike_show::LifelikeShowScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Default)]
 pub enum MenuScreen {
     #[default]
     None,
+    // starting screen
     SelectAutomatonType(AutomatonTypeScreen),
 
     SelectAutomaton1D(Automaton1DScreen),
     SelectAutomaton2D(Automaton2DScreen),
 
+    // 1D automata options
     ElementaryAutomatonOptions(ElementarySettingsScreen),
     ExtendedAutomatonOptions(ExtendedSettingsScreen),
 
+    // 2D automata
     LifelikeAutomatonOptions(LifelikeSettingsScreen),
     BriansBrainOptions(BriansBrainSettingsScreen),
     
+    // 1D automata show
     ElementaryAutomatonShow(ElementaryShowScreen),
     ExtendedAutomatonShow(ExtendedShowScreen),
 
+    // 2D automata show
     LifelikeAutomatonShow(LifelikeShowScreen),
     BriansBrainShow(BriansBrainShowScreen)
 }
@@ -88,15 +93,21 @@ impl Nav {
             )
         );
         tree.extend_with_edges(&[
-            (sat, s1da),
             (sat, s2da),
-            (s1da, elao),
+            (sat, s1da),
+
             (s1da, exao),
+            (s1da, elao),
+            
             (elao, els),
+
             (exao, exs),
-            (s2da, lao),
+
             (s2da, bbo),
+            (s2da, lao),
+
             (lao, las),
+            
             (bbo, bbs)
         ]);
 

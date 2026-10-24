@@ -28,7 +28,7 @@ impl Screen<()> for Automaton1DScreen {
     }
 
     fn get_info(&self) {
-        
+
     }
 
     fn control(&mut self) -> Option<usize> {
@@ -47,7 +47,7 @@ impl Screen<()> for Automaton1DScreen {
             );
             */
 
-            return Some(1);
+            return Some(0);
         }
         if buttons[1].control() {
             /*
@@ -61,7 +61,7 @@ impl Screen<()> for Automaton1DScreen {
                 None, None, None, None
             ); 
             */
-            return Some(0);
+            return Some(1);
         }
 
         None

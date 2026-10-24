@@ -35,7 +35,7 @@ impl Screen<()> for Automaton2DScreen {
         
         for i in 0..buttons.len() {
             if buttons[i].control() {
-                return Some(buttons.len()-1 - i);
+                return Some(i);
             }
         }
 
