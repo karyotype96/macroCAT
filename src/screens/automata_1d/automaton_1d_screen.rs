@@ -8,7 +8,7 @@ impl Screen<()> for Automaton1DScreen {
     fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<MenuButton> {
-        let button_top = screen_height() / 6.0;
+        let mut button_top = screen_height() / 6.0;
 
         let elementary_button = MenuButton::new(
             "ELEMENTARY AUTOMATON",
@@ -17,14 +17,25 @@ impl Screen<()> for Automaton1DScreen {
             None,
         );
 
+        button_top += elementary_button.get_dimensions().1 + 20.0;
+
         let extended_button = MenuButton::new(
             "EXTENDED AUTOMATON",
-            (screen_width() / 4.0, button_top + elementary_button.get_dimensions().1 + 20.0),
+            (screen_width() / 4.0, button_top),
             None,
             None,
         );
 
-        vec![elementary_button, extended_button]
+        button_top += extended_button.get_dimensions().1 + 20.0;
+
+        let totalistic_button = MenuButton::new(
+            "TOTALISTIC AUTOMATON",
+            (screen_width() / 4.0, button_top),
+            None,
+            None
+        );
+
+        vec![elementary_button, extended_button, totalistic_button]
     }
 
     fn get_info(&self) {
@@ -34,8 +45,8 @@ impl Screen<()> for Automaton1DScreen {
     fn control(&mut self) -> Option<usize> {
         let buttons = self.get_buttons();
         
-        if buttons[0].control() {
-            /*
+        /* if buttons[0].control() {
+            
             nav.toaster.flush();
             nav.toaster.add_message(
                 "Hit the checkboxes to change the bits of the automaton rule.", 
@@ -45,12 +56,11 @@ impl Screen<()> for Automaton1DScreen {
                 "Press the button just above the \"START!\" button to change the starting cell config.", 
                 None, None, None, None
             );
-            */
 
             return Some(0);
         }
         if buttons[1].control() {
-            /*
+
             nav.toaster.flush();
             nav.toaster.add_message(
                 "Hit the checkboxes to change the bits of the automaton rule.", 
@@ -60,8 +70,16 @@ impl Screen<()> for Automaton1DScreen {
                 "Press the button in the middle of the screen to change the starting cell config.", 
                 None, None, None, None
             ); 
-            */
             return Some(1);
+        }
+        if buttons[2].control() {
+            return Some(2);
+        } */
+
+        for i in 0..buttons.len() {
+            if buttons[i].control() {
+                return Some(i);
+            }
         }
 
         None

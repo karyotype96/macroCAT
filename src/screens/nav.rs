@@ -1,7 +1,7 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 use petgraph::{Graph, graph::NodeIndex};
 
-use crate::{screens::{automata_1d::{automaton_1d_screen::Automaton1DScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen}, automata_2d::{automaton_2d_screen::Automaton2DScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, lifelike_settings::LifelikeSettingsScreen, lifelike_show::LifelikeShowScreen}, automaton_type_screen::AutomatonTypeScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{screens::{automata_1d::{automaton_1d_screen::Automaton1DScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, totalistic_settings::TotalisticSettingsScreen, totalistic_show::TotalisticShowScreen}, automata_2d::{automaton_2d_screen::Automaton2DScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, lifelike_settings::LifelikeSettingsScreen, lifelike_show::LifelikeShowScreen}, automaton_type_screen::AutomatonTypeScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Default)]
 pub enum MenuScreen {
@@ -16,6 +16,7 @@ pub enum MenuScreen {
     // 1D automata options
     ElementaryAutomatonOptions(ElementarySettingsScreen),
     ExtendedAutomatonOptions(ExtendedSettingsScreen),
+    TotalisticAutomatonOptions(TotalisticSettingsScreen),
 
     // 2D automata
     LifelikeAutomatonOptions(LifelikeSettingsScreen),
@@ -24,6 +25,7 @@ pub enum MenuScreen {
     // 1D automata show
     ElementaryAutomatonShow(ElementaryShowScreen),
     ExtendedAutomatonShow(ExtendedShowScreen),
+    TotalisticAutomatonShow(TotalisticShowScreen),
 
     // 2D automata show
     LifelikeAutomatonShow(LifelikeShowScreen),
@@ -61,6 +63,9 @@ impl Nav {
         let exao = tree.add_node(MenuScreen::ExtendedAutomatonOptions(
             ExtendedSettingsScreen::new()
         ));
+        let tao = tree.add_node(MenuScreen::TotalisticAutomatonOptions(
+            TotalisticSettingsScreen::new()
+        ));
 
         let lao = tree.add_node(MenuScreen::LifelikeAutomatonOptions(
             LifelikeSettingsScreen::new()
@@ -74,10 +79,14 @@ impl Nav {
                 ElementaryShowScreen::new()
             )
         );
-
         let exs = tree.add_node(
             MenuScreen::ExtendedAutomatonShow(
                 ExtendedShowScreen::new()
+            )
+        );
+        let ts = tree.add_node(
+            MenuScreen::TotalisticAutomatonShow(
+                TotalisticShowScreen::new()
             )
         );
 
@@ -86,22 +95,25 @@ impl Nav {
                 LifelikeShowScreen::new()
             )
         );
-
         let bbs = tree.add_node(
             MenuScreen::BriansBrainShow(
                 BriansBrainShowScreen::new()
             )
         );
+
         tree.extend_with_edges(&[
             (sat, s2da),
             (sat, s1da),
 
+            (s1da, tao),
             (s1da, exao),
             (s1da, elao),
             
             (elao, els),
 
             (exao, exs),
+
+            (tao, ts),
 
             (s2da, bbo),
             (s2da, lao),
@@ -214,6 +226,22 @@ impl Nav {
                     }
                 }
             }
+            MenuScreen::TotalisticAutomatonOptions(s) => {
+                let info = s.get_info();
+                
+                if let Some(i) = s.control() {
+                    let next_screen = self.navigate_forward(i);
+                
+                    let to_edit = &mut self.tree[next_screen];
+                    match to_edit {
+                        MenuScreen::TotalisticAutomatonShow(ns) => {
+                            ns.reset();
+                            ns.set_info(info.0, info.1);
+                        }
+                        _ => {}
+                    }
+                }
+            }
             MenuScreen::LifelikeAutomatonOptions(s) => {
                 let info = s.get_info();
 
@@ -252,6 +280,9 @@ impl Nav {
             MenuScreen::ExtendedAutomatonShow(s) => {
                 s.control();
             }
+            MenuScreen::TotalisticAutomatonShow(s) => {
+                s.control();
+            }
             MenuScreen::LifelikeAutomatonShow(s) => {
                 s.control();
             }
@@ -271,10 +302,12 @@ impl Nav {
             MenuScreen::SelectAutomaton2D(s) => { s.draw(); }
             MenuScreen::ElementaryAutomatonOptions(s) => { s.draw(); }
             MenuScreen::ExtendedAutomatonOptions(s) => { s.draw(); }
+            MenuScreen::TotalisticAutomatonOptions(s) => { s.draw(); }
             MenuScreen::LifelikeAutomatonOptions(s) => { s.draw(); }
             MenuScreen::BriansBrainOptions(s) => { s.draw(); }
             MenuScreen::ElementaryAutomatonShow(s) => { s.draw(); }
             MenuScreen::ExtendedAutomatonShow(s) => { s.draw(); }
+            MenuScreen::TotalisticAutomatonShow(s) => { s.draw(); }
             MenuScreen::LifelikeAutomatonShow(s) => { s.draw(); }
             MenuScreen::BriansBrainShow(s) => { s.draw(); }
             _ => {}
