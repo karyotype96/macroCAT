@@ -2,6 +2,7 @@ pub mod button;
 pub mod checkbox;
 pub mod nav;
 pub mod number_clickbox;
+pub mod radio_button;
 pub mod screen;
 
 pub mod automaton_type_screen;

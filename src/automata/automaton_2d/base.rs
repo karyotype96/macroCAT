@@ -8,6 +8,7 @@ pub struct Automaton2DInfo<Data: PartialEq + PartialOrd> {
     pub seen_range_y: (usize, usize),
 
     use_data2: bool,
+    zoom_factor: u32,
 }
 
 impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data> {
@@ -29,7 +30,8 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data
             seen_range_x: seen_range,
             seen_range_y,
 
-            use_data2: false
+            use_data2: false,
+            zoom_factor: 1
         }
     }
     pub fn get_width(&self) -> usize {
@@ -101,6 +103,62 @@ impl<Data: Clone + Copy + Default + PartialEq + PartialOrd> Automaton2DInfo<Data
 
     pub fn get_cell_size(&self) -> f32 {
         screen_width() / (self.seen_range_x.1 - self.seen_range_x.0) as f32
+    }
+
+    pub fn zoom_out(&mut self) {
+        let center_x = (self.seen_range_x.1 - self.seen_range_x.0) / 2 + self.seen_range_x.0;
+        let center_y = (self.seen_range_y.1 - self.seen_range_y.0) / 2 + self.seen_range_y.0;
+
+        let horiz_half_width = center_x - self.seen_range_x.0;
+        let vert_half_width = center_y - self.seen_range_y.0;
+
+        if self.zoom_factor < 4 {
+            self.zoom_factor += 1;
+
+            // Zoom window horizontally
+            let left_x_tmp = self.seen_range_x.0;
+            self.seen_range_x.0 = self.seen_range_x.0.saturating_sub(horiz_half_width);
+
+            // If the left edge of the window would go past 0, stop it from extending
+            // past the edge and increase the right side of the x range by the difference
+            let remaining_x = horiz_half_width - (left_x_tmp - self.seen_range_x.0);
+
+            self.seen_range_x.1 += horiz_half_width + remaining_x;
+
+            while self.seen_range_x.1 >= self.get_width() {
+                self.move_window((-1, 0));
+            }
+
+            // Zoom window vertically
+            let top_y_tmp = self.seen_range_y.0;
+            self.seen_range_y.0 = self.seen_range_y.0.saturating_sub(vert_half_width);
+
+            let remaining_y = vert_half_width - (top_y_tmp - self.seen_range_y.0);
+
+            self.seen_range_y.1 += vert_half_width + remaining_y;
+
+            while self.seen_range_y.1 >= self.get_height() {
+                self.move_window((0, -1));
+            }
+        }
+    }
+
+    pub fn zoom_in(&mut self) {
+        let center_x = (self.seen_range_x.1 - self.seen_range_x.0) / 2 + self.seen_range_x.0;
+        let center_y = (self.seen_range_y.1 - self.seen_range_y.0) / 2 + self.seen_range_y.0;
+
+        if self.zoom_factor > 1 {
+            self.zoom_factor -= 1;
+
+            let horiz_half_width = center_x - self.seen_range_x.0;
+            let vert_half_width = center_y - self.seen_range_y.0;
+
+            self.seen_range_x.0 += horiz_half_width / 2;
+            self.seen_range_x.1 -= horiz_half_width / 2;
+
+            self.seen_range_y.0 += vert_half_width / 2;
+            self.seen_range_y.1 -= vert_half_width / 2;
+        }
     }
 
     pub fn read_from(&self, x: i32, y: i32) -> Data {

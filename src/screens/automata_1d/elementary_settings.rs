@@ -91,7 +91,6 @@ impl Screen<(ElementaryConfig, u8)> for ElementarySettingsScreen {
         let buttons = self.get_buttons();
 
         let label = format!("Rule Selected: {}", self.rule);
-
         let label_dimensions = measure_text(
             label.clone(), 
             None, 

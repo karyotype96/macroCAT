@@ -1,4 +1,4 @@
-use macroquad::{color::{BLACK, BLUE, WHITE}, input::{KeyCode, is_key_down, is_key_pressed}, shapes::draw_rectangle, window::screen_width};
+use macroquad::{color::{BLACK, BLUE, WHITE}, input::{KeyCode, is_key_down, is_key_pressed, mouse_wheel}, shapes::draw_rectangle, window::screen_width};
 
 use crate::{automata::automaton_2d::base::{Automaton2D, Automaton2DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
@@ -135,6 +135,14 @@ impl Automaton2D<BriansBrainState, BriansBrainConfig, DummyRule> for BriansBrain
     fn control(&mut self) {
         if self.advance_delayer.run_delayer(&[KeyCode::Space]) && self.timer.run_timer(&[KeyCode::Space]) {
             self.pass_time();
+        }
+
+        let mw = mouse_wheel();
+        if mw.1 < 0.0 {
+            self.info.zoom_out();
+        } 
+        if mw.1 > 0.0 {
+            self.info.zoom_in();
         }
 
         let move_keys = [

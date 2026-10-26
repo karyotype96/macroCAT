@@ -24,7 +24,7 @@ impl Automaton1D<bool, ExtendedConfig, u32> for Extended {
             panic!("Automaton should not have a width less than 100");
         }
 
-        let info: Automaton1DInfo<bool> = Automaton1DInfo::new(width, (width / 2 + 1 - 50, width / 2 + 1 + 50));
+        let info: Automaton1DInfo<bool> = Automaton1DInfo::new(width, (width / 2 + 1 - 50, width / 2 + 1 + 51));
 
         let mut s = Self {
             info,
@@ -64,7 +64,7 @@ impl Automaton1D<bool, ExtendedConfig, u32> for Extended {
 
     fn restart(&mut self) {
         let width = self.info.data[0].len();
-        let seen_range = (width / 2 + 1 - 50, width / 2 + 1 + 50);
+        let seen_range = (width / 2 + 1 - 50, width / 2 + 1 + 51);
 
         self.info = Automaton1DInfo::new(width, seen_range);
         self.apply_config(self.config);

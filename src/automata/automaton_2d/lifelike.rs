@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use macroquad::{color::{GREEN, WHITE}, input::{KeyCode, MouseButton, is_key_down, is_key_pressed, is_mouse_button_down, mouse_position}, shapes::{draw_rectangle, draw_rectangle_lines}, window::{screen_width}};
+use macroquad::{color::{GREEN, WHITE}, input::{KeyCode, MouseButton, is_key_down, is_key_pressed, is_mouse_button_down, mouse_position, mouse_wheel}, shapes::{draw_rectangle, draw_rectangle_lines}, window::screen_width};
 
 use crate::{automata::automaton_2d::base::{Automaton2D, Automaton2DInfo}, helpers::{delayer::Delayer, timer::Timer}};
 
@@ -150,6 +150,14 @@ impl Automaton2D<bool, LifelikeConfig, (u16, u16)> for Lifelike {
 
     fn control(&mut self) {
         let mut editable = self.created.elapsed().as_millis() > 200;
+
+        let mw = mouse_wheel();
+        if mw.1 < 0.0 {
+            self.info.zoom_out();
+        } 
+        if mw.1 > 0.0 {
+            self.info.zoom_in();
+        }
 
         if self.advance_delayer.run_delayer(&[KeyCode::Space]) && self.timer.run_timer(&[KeyCode::Space]) {
             editable = false;

@@ -123,11 +123,15 @@ impl Nav {
             (bbo, bbs)
         ]);
 
-        Self {
+        let mut s = Self {
             tree,
             indices: vec![sat],
             toaster: Toaster::new(),
-        }
+        };
+
+        s.toaster.quick_msg("Press TAB on any screen to see a quick tutorial on it.");
+
+        s
     }
 
     pub fn get_current_node(&mut self) -> NodeIndex {
@@ -312,5 +316,7 @@ impl Nav {
             MenuScreen::BriansBrainShow(s) => { s.draw(); }
             _ => {}
         }
+
+        self.toaster.run();
     }
 }
