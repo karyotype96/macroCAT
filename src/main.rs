@@ -11,6 +11,7 @@ fn window_conf() -> Conf {
     Conf {
         window_title: "MacroCAT".to_owned(),
         fullscreen: true,
+        window_resizable: false,
         ..Default::default()
     }
 }
@@ -18,6 +19,8 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    next_frame().await;
+
     let mut nav = Nav::new();
 
     loop {
