@@ -10,8 +10,9 @@ use crate::screens::nav::Nav;
 fn window_conf() -> Conf {
     Conf {
         window_title: "MacroCAT".to_owned(),
-        fullscreen: true,
-        window_resizable: false,
+        fullscreen: false,
+        window_width: 1920,
+        window_height: 1080,
         ..Default::default()
     }
 }
