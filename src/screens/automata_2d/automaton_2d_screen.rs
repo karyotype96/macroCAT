@@ -5,10 +5,14 @@ use crate::{screens::{button::{MenuButton}, screen::Screen}};
 pub struct Automaton2DScreen;
 
 impl Screen<()> for Automaton2DScreen {
+    fn new() -> Self {
+        Self
+    }
+
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
-        let button_top = screen_height() / 6.0;
+        let mut button_top = screen_height() / 6.0;
 
         let lifelike_button = MenuButton::new(
             "LIFELIKE AUTOMATON",
@@ -17,15 +21,23 @@ impl Screen<()> for Automaton2DScreen {
             None
         );
 
-        let height = lifelike_button.get_dimensions().1;
+        button_top += lifelike_button.get_dimensions().1 + 20.0;
         let brians_brain_button = MenuButton::new(
             "BRIAN'S BRAIN",
-            (screen_width() / 4.0, button_top + height + 8.0),
+            (screen_width() / 4.0, button_top),
             None,
             None
         );
 
-        vec![lifelike_button, brians_brain_button]
+        button_top += brians_brain_button.get_dimensions().1 + 20.0;
+        let rps_button = MenuButton::new(
+            "ROCK PAPER SCISSORS",
+            (screen_width() / 4.0, button_top),
+            None,
+            None
+        );
+
+        vec![lifelike_button, brians_brain_button, rps_button]
     }
 
     fn get_info(&self) {}

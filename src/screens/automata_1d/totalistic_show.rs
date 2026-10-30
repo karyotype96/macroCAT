@@ -6,9 +6,14 @@ pub struct TotalisticShowScreen {
 }
 
 impl Screen<()> for TotalisticShowScreen {
-    fn init(&mut self) {
-
+    fn new() -> Self {
+        Self {
+            is_init: false,
+            el: Totalistic::new(200, TotalisticConfig::CenterPixel, 0)
+        }
     }
+
+    fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
         vec![]
@@ -28,13 +33,6 @@ impl Screen<()> for TotalisticShowScreen {
 }
 
 impl TotalisticShowScreen {
-    pub fn new() -> Self {
-        Self {
-            is_init: false,
-            el: Totalistic::new(200, TotalisticConfig::CenterPixel, 0)
-        }
-    }
-
     pub fn set_info(&mut self, cfg: TotalisticConfig, rule: u16) {
         if !self.is_init {
             self.el = Totalistic::new(2000, cfg, rule);

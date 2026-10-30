@@ -10,6 +10,19 @@ pub struct TotalisticSettingsScreen {
 }
 
 impl Screen<(TotalisticConfig, u16)> for TotalisticSettingsScreen {
+    fn new() -> Self {
+        let mut s = Self {
+            clickboxes: Vec::new(),
+
+            cfg: TotalisticConfig::CenterPixel,
+            rule: 0
+        };
+
+        s.init();
+
+        s
+    }
+
     fn init(&mut self) {
         let center_x = screen_width() / 2.0;
         let leftmost_x = center_x - NumberClickbox::size()*3.0;
@@ -119,19 +132,6 @@ impl Screen<(TotalisticConfig, u16)> for TotalisticSettingsScreen {
 }
 
 impl TotalisticSettingsScreen {
-    pub fn new() -> Self {
-        let mut s = Self {
-            clickboxes: Vec::new(),
-
-            cfg: TotalisticConfig::CenterPixel,
-            rule: 0
-        };
-
-        s.init();
-
-        s
-    }
-
     pub fn draw_rule(&self, clickbox: &NumberClickbox, index: u8) {
         let space_offset: f32 = 10.0;
         let width: f32 = NumberClickbox::size() * 3.0 + (space_offset * 2.0);

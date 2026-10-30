@@ -126,12 +126,13 @@ impl Automaton2D<RPSState, RPSConfig, DummyRule> for RPS {
         };
 
         let needed_count = match self.neighborhood {
-            RPSNeighborhoodType::Moore => 5,
+            RPSNeighborhoodType::Moore => 3,
             RPSNeighborhoodType::VonNeumann => 2,
         };
 
         for y in 0..self.info.get_height() {
             for x in 0..self.info.get_width() {
+                let state = self.info.read_from(x as i32, y as i32);
                 let mut counts = vec![0, 0, 0, 0];
                 for (sx, sy) in to_read.iter() {
                     match self.info.read_from(x as i32 + sx, y as i32 + sy) {
@@ -140,9 +141,20 @@ impl Automaton2D<RPSState, RPSConfig, DummyRule> for RPS {
                         RPSState::Paper     => { counts[2] += 1; }
                         RPSState::Scissors  => { counts[3] += 1; }
                     }
+                }
 
-                    match self.info.read_from(x as i32, y as i32) {
-                        RPSState::None => {
+                self.info.write_data(x as i32, y as i32, state);
+
+                match self.info.read_from(x as i32, y as i32) {
+                    RPSState::None => {
+                        let weights: Vec<_> = counts
+                            .iter()
+                            .enumerate()
+                            .filter(|(i, x)| { **x > 0 && *i > 0 } )
+                            .collect();
+
+                        if weights.len() > 0 {
+
                             let possibilities = [RPSState::Rock, RPSState::Paper, RPSState::Scissors];
 
                             let weights = &counts[1..];
@@ -150,22 +162,22 @@ impl Automaton2D<RPSState, RPSConfig, DummyRule> for RPS {
                             let dist = WeightedIndex::new(weights).unwrap();
                             let mut rng = rand::rng();
 
-                            self.info.write_data_in_place(x as i32, y as i32, possibilities[dist.sample(&mut rng)]);
+                            self.info.write_data(x as i32, y as i32, possibilities[dist.sample(&mut rng)]);
                         }
-                        RPSState::Rock => {
-                            if counts[2] >= needed_count {
-                                self.info.write_data_in_place(x as i32, y as i32, RPSState::Paper);
-                            }
+                    }
+                    RPSState::Rock => {
+                        if counts[2] >= needed_count {
+                            self.info.write_data(x as i32, y as i32, RPSState::Paper);
                         }
-                        RPSState::Paper => {
-                            if counts[3] >= needed_count {
-                                self.info.write_data_in_place(x as i32, y as i32, RPSState::Scissors);
-                            }
+                    }
+                    RPSState::Paper => {
+                        if counts[3] >= needed_count {
+                            self.info.write_data(x as i32, y as i32, RPSState::Scissors);
                         }
-                        RPSState::Scissors => {
-                            if counts[1] >= needed_count {
-                                self.info.write_data_in_place(x as i32, y as i32, RPSState::Rock);
-                            }
+                    }
+                    RPSState::Scissors => {
+                        if counts[1] >= needed_count {
+                            self.info.write_data(x as i32, y as i32, RPSState::Rock);
                         }
                     }
                 }

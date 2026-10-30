@@ -11,6 +11,19 @@ pub struct ElementarySettingsScreen {
 }
 
 impl Screen<(ElementaryConfig, u8)> for ElementarySettingsScreen {
+    fn new() -> Self {
+        let mut s = Self {
+            checkboxes: Vec::new(),
+
+            cfg: ElementaryConfig::CenterPixel,
+            rule: 0
+        };
+
+        s.init();
+
+        s
+    }
+
     fn init(&mut self) {
         let center_x = screen_width() / 2.0;
         let leftmost_x = center_x - Checkbox::size()*3.5;
@@ -115,18 +128,6 @@ impl Screen<(ElementaryConfig, u8)> for ElementarySettingsScreen {
 }
 
 impl ElementarySettingsScreen {
-    pub fn new() -> Self {
-        let mut s = Self {
-            checkboxes: Vec::new(),
-
-            cfg: ElementaryConfig::CenterPixel,
-            rule: 0
-        };
-
-        s.init();
-
-        s
-    }
 
     fn flip_bit(&mut self, bit: u8, is_one: bool) {
         if bit >= 8 { return; }

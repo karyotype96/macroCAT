@@ -13,6 +13,20 @@ pub struct LifelikeSettingsScreen {
 }
 
 impl Screen<(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16))> for LifelikeSettingsScreen {
+    fn new() -> Self {
+        let mut screen = LifelikeSettingsScreen {
+            born_boxes: Vec::new(),
+            live_boxes: Vec::new(),
+
+            cfg: LifelikeConfig::None,
+            neighborhood: LifelikeNeighborhoodType::Moore,
+            rule: (0, 0)
+        };
+
+        screen.init();
+        screen
+    }
+    
     fn init(&mut self) {
         let left_center = screen_width() / 3.0;
         let right_center = screen_width() * 2.0 / 3.0;
@@ -201,20 +215,6 @@ impl Screen<(LifelikeConfig, LifelikeNeighborhoodType, (u16, u16))> for Lifelike
 }
 
 impl LifelikeSettingsScreen {
-    pub fn new() -> Self {
-        let mut screen = LifelikeSettingsScreen {
-            born_boxes: Vec::new(),
-            live_boxes: Vec::new(),
-
-            cfg: LifelikeConfig::None,
-            neighborhood: LifelikeNeighborhoodType::Moore,
-            rule: (0, 0)
-        };
-
-        screen.init();
-        screen
-    }
-
     fn rule_to_string(&self) -> String {
         let mut born_rule = String::new();
         let mut live_rule = String::new();

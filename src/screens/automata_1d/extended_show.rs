@@ -6,6 +6,13 @@ pub struct ExtendedShowScreen {
 }
 
 impl Screen<()> for ExtendedShowScreen {
+    fn new() -> Self {
+        Self {
+            is_init: false,
+            el: Extended::new(2000, ExtendedConfig::CenterPixel, 0)
+        }
+    }
+
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -26,13 +33,6 @@ impl Screen<()> for ExtendedShowScreen {
 }
 
 impl ExtendedShowScreen {
-    pub fn new() -> Self {
-        Self {
-            is_init: false,
-            el: Extended::new(2000, ExtendedConfig::CenterPixel, 0)
-        }
-    }
-
     pub fn set_info(&mut self, cfg: ExtendedConfig, rule: u32) {
         if !self.is_init {
             self.el = Extended::new(2000, cfg, rule);

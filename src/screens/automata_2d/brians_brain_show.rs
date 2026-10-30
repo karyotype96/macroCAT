@@ -6,6 +6,13 @@ pub struct BriansBrainShowScreen {
 }
 
 impl Screen<()> for BriansBrainShowScreen {
+    fn new() -> Self {
+        Self {
+            is_init: false,
+            el: BriansBrain::new(1000, 1000, BriansBrainConfig::AllRandom, DummyRule)
+        }
+    }
+
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -26,13 +33,6 @@ impl Screen<()> for BriansBrainShowScreen {
 }
 
 impl BriansBrainShowScreen {
-    pub fn new() -> Self {
-        Self {
-            is_init: false,
-            el: BriansBrain::new(1000, 1000, BriansBrainConfig::AllRandom, DummyRule{})
-        }
-    }
-
     pub fn set_info(&mut self, cfg: BriansBrainConfig) {
         if !self.is_init {
             self.el = BriansBrain::new(1000, 1000, cfg, DummyRule{});

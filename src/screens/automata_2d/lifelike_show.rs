@@ -6,6 +6,13 @@ pub struct LifelikeShowScreen {
 }
 
 impl Screen<()> for LifelikeShowScreen {
+    fn new() -> Self {
+        Self {
+            is_init: false,
+            el: Lifelike::new(1000, 1000, LifelikeConfig::None, (0, 0))
+        }
+    }
+
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -26,12 +33,6 @@ impl Screen<()> for LifelikeShowScreen {
 }
 
 impl LifelikeShowScreen {
-    pub fn new() -> Self {
-        Self {
-            is_init: false,
-            el: Lifelike::new(1000, 1000, LifelikeConfig::None, (0, 0))
-        }
-    }
 
     pub fn set_info(&mut self, cfg: LifelikeConfig, neighborhood: LifelikeNeighborhoodType, rule: (u16, u16)) {
         if !self.is_init {

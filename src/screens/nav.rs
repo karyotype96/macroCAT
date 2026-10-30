@@ -1,7 +1,7 @@
 use macroquad::input::{KeyCode, is_key_pressed};
 use petgraph::{Graph, graph::NodeIndex};
 
-use crate::{screens::{automata_1d::{automaton_1d_screen::Automaton1DScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, totalistic_settings::TotalisticSettingsScreen, totalistic_show::TotalisticShowScreen}, automata_2d::{automaton_2d_screen::Automaton2DScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, lifelike_settings::LifelikeSettingsScreen, lifelike_show::LifelikeShowScreen}, automaton_type_screen::AutomatonTypeScreen, screen::Screen}, toaster::toaster::Toaster};
+use crate::{screens::{automata_1d::{automaton_1d_screen::Automaton1DScreen, elementary_settings::ElementarySettingsScreen, elementary_show::ElementaryShowScreen, extended_settings::ExtendedSettingsScreen, extended_show::ExtendedShowScreen, totalistic_settings::TotalisticSettingsScreen, totalistic_show::TotalisticShowScreen}, automata_2d::{automaton_2d_screen::Automaton2DScreen, brians_brain_settings::BriansBrainSettingsScreen, brians_brain_show::BriansBrainShowScreen, lifelike_settings::LifelikeSettingsScreen, lifelike_show::LifelikeShowScreen, rps_settings::RPSSettingsScreen, rps_show::RPSShowScreen}, automaton_type_screen::AutomatonTypeScreen, screen::Screen}, toaster::toaster::Toaster};
 
 #[derive(Default)]
 pub enum MenuScreen {
@@ -21,6 +21,7 @@ pub enum MenuScreen {
     // 2D automata
     LifelikeAutomatonOptions(LifelikeSettingsScreen),
     BriansBrainOptions(BriansBrainSettingsScreen),
+    RPSOptions(RPSSettingsScreen),
     
     // 1D automata show
     ElementaryAutomatonShow(ElementaryShowScreen),
@@ -29,7 +30,8 @@ pub enum MenuScreen {
 
     // 2D automata show
     LifelikeAutomatonShow(LifelikeShowScreen),
-    BriansBrainShow(BriansBrainShowScreen)
+    BriansBrainShow(BriansBrainShowScreen),
+    RPSShow(RPSShowScreen)
 }
 
 pub struct Nav {
@@ -73,6 +75,9 @@ impl Nav {
         let bbo = tree.add_node(MenuScreen::BriansBrainOptions(
             BriansBrainSettingsScreen::new()
         ));
+        let rpso = tree.add_node(MenuScreen::RPSOptions(
+            RPSSettingsScreen::new()
+        ));
 
         let els = tree.add_node(
             MenuScreen::ElementaryAutomatonShow(
@@ -100,6 +105,11 @@ impl Nav {
                 BriansBrainShowScreen::new()
             )
         );
+        let rpss = tree.add_node(
+            MenuScreen::RPSShow(
+                RPSShowScreen::new()
+            )
+        );
 
         tree.extend_with_edges(&[
             (sat, s2da),
@@ -115,12 +125,15 @@ impl Nav {
 
             (tao, ts),
 
+            (s2da, rpso),
             (s2da, bbo),
             (s2da, lao),
 
             (lao, las),
 
-            (bbo, bbs)
+            (bbo, bbs),
+
+            (rpso, rpss)
         ]);
 
         let mut s = Self {
@@ -278,6 +291,22 @@ impl Nav {
                     }
                 }
             }
+            MenuScreen::RPSOptions(s) => {
+                let info = s.get_info();
+
+                if let Some(i) = s.control() {
+                    let next_screen = self.navigate_forward(i);
+
+                    let to_edit = &mut self.tree[next_screen];
+                    match to_edit {
+                        MenuScreen::RPSShow(ns) => {
+                            ns.reset();
+                            ns.set_info(info.0, info.1);
+                        }
+                        _ => {}
+                    }
+                }
+            }
             MenuScreen::ElementaryAutomatonShow(s) => {
                 s.control();
             }
@@ -291,6 +320,9 @@ impl Nav {
                 s.control();
             }
             MenuScreen::BriansBrainShow(s) => {
+                s.control();
+            }
+            MenuScreen::RPSShow(s) => {
                 s.control();
             }
             _ => {}
@@ -309,11 +341,13 @@ impl Nav {
             MenuScreen::TotalisticAutomatonOptions(s) => { s.draw(); }
             MenuScreen::LifelikeAutomatonOptions(s) => { s.draw(); }
             MenuScreen::BriansBrainOptions(s) => { s.draw(); }
+            MenuScreen::RPSOptions(s) => { s.draw(); }
             MenuScreen::ElementaryAutomatonShow(s) => { s.draw(); }
             MenuScreen::ExtendedAutomatonShow(s) => { s.draw(); }
             MenuScreen::TotalisticAutomatonShow(s) => { s.draw(); }
             MenuScreen::LifelikeAutomatonShow(s) => { s.draw(); }
             MenuScreen::BriansBrainShow(s) => { s.draw(); }
+            MenuScreen::RPSShow(s) => { s.draw(); }
             _ => {}
         }
 

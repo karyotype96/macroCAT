@@ -6,6 +6,13 @@ pub struct ElementaryShowScreen {
 }
 
 impl Screen<()> for ElementaryShowScreen {
+    fn new() -> Self {
+        Self {
+            is_init: false,
+            el: Elementary::new(2000, ElementaryConfig::CenterPixel, 0)
+        }
+    }
+
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -26,12 +33,6 @@ impl Screen<()> for ElementaryShowScreen {
 }
 
 impl ElementaryShowScreen {
-    pub fn new() -> Self {
-        Self {
-            is_init: false,
-            el: Elementary::new(2000, ElementaryConfig::CenterPixel, 0)
-        }
-    }
 
     pub fn set_info(&mut self, cfg: ElementaryConfig, rule: u8) {
         if !self.is_init {

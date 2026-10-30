@@ -5,6 +5,10 @@ use crate::{screens::{button::MenuButton, screen::Screen}};
 pub struct Automaton1DScreen;
 
 impl Screen<()> for Automaton1DScreen {
+    fn new() -> Self {
+        Self
+    }
+    
     fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -44,37 +48,6 @@ impl Screen<()> for Automaton1DScreen {
 
     fn control(&mut self) -> Option<usize> {
         let buttons = self.get_buttons();
-        
-        /* if buttons[0].control() {
-            
-            nav.toaster.flush();
-            nav.toaster.add_message(
-                "Hit the checkboxes to change the bits of the automaton rule.", 
-                None, None, None, None
-            );
-            nav.toaster.add_message(
-                "Press the button just above the \"START!\" button to change the starting cell config.", 
-                None, None, None, None
-            );
-
-            return Some(0);
-        }
-        if buttons[1].control() {
-
-            nav.toaster.flush();
-            nav.toaster.add_message(
-                "Hit the checkboxes to change the bits of the automaton rule.", 
-                None, None, None, None
-            );
-            nav.toaster.add_message(
-                "Press the button in the middle of the screen to change the starting cell config.", 
-                None, None, None, None
-            ); 
-            return Some(1);
-        }
-        if buttons[2].control() {
-            return Some(2);
-        } */
 
         for i in 0..buttons.len() {
             if buttons[i].control() {

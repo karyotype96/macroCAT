@@ -11,6 +11,18 @@ pub struct ExtendedSettingsScreen {
 }
 
 impl Screen<(ExtendedConfig, u32)> for ExtendedSettingsScreen { 
+    fn new() -> Self {
+        let mut s = Self {
+            checkboxes: Vec::new(),
+            cfg: ExtendedConfig::CenterPixel,
+            rule: 0
+        };
+
+        s.init();
+
+        s
+    }
+
     fn init(&mut self) {
         let center_x = screen_width() / 2.0;
         let leftmost_x = center_x - Checkbox::size() * 15.5;
@@ -116,18 +128,6 @@ impl Screen<(ExtendedConfig, u32)> for ExtendedSettingsScreen {
 }
 
 impl ExtendedSettingsScreen {
-    pub fn new() -> Self {
-        let mut s = Self {
-            checkboxes: Vec::new(),
-            cfg: ExtendedConfig::CenterPixel,
-            rule: 0
-        };
-
-        s.init();
-
-        s
-    }
-
     fn flip_bit(&mut self, bit: u32, is_one: bool) {
         if bit >= 32 { return; }
 

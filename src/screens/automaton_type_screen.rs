@@ -5,6 +5,10 @@ use crate::{screens::{button::MenuButton, screen::Screen}};
 pub struct AutomatonTypeScreen;
 
 impl Screen<()> for AutomatonTypeScreen {
+    fn new() -> Self {
+        Self
+    }
+
     fn init(&mut self) { }
 
     fn get_buttons(&self) -> Vec<MenuButton> {

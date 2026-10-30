@@ -7,6 +7,16 @@ pub struct BriansBrainSettingsScreen {
 }
 
 impl Screen<BriansBrainConfig> for BriansBrainSettingsScreen {
+    fn new() -> Self {
+        let mut s = Self {
+            cfg: BriansBrainConfig::AllRandom
+        };
+
+        s.init();
+
+        s
+    }
+    
     fn init(&mut self) {}
 
     fn get_buttons(&self) -> Vec<MenuButton> {
@@ -73,17 +83,5 @@ impl Screen<BriansBrainConfig> for BriansBrainSettingsScreen {
         for b in buttons.iter() {
             b.draw();
         }
-    }
-}
-
-impl BriansBrainSettingsScreen {
-    pub fn new() -> Self {
-        let mut s = Self {
-            cfg: BriansBrainConfig::AllRandom
-        };
-
-        s.init();
-
-        s
     }
 }
